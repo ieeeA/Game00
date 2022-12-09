@@ -11,6 +11,22 @@ public class ItemData
     public int _StackMaxCount = 64;
     public string _Name;
     public string _Description;
+    public ItemDataBaseV0 _EquipmentData;
+
+    // 後方互換性のため一旦こうしておく（Item系が動作確認され次第回収してコメントアウトする）
+    public ItemData()
+    {
+
+    }
+
+    public ItemData(ItemDataBaseV0 data)
+    {
+        // 後方互換性のため
+        _EquipmentData = data;
+        _StackMaxCount = data._MaxCount;
+        _Description = data._Description;
+        _Name = data._Name;
+    }
 }
 
 public class ItemContainer
