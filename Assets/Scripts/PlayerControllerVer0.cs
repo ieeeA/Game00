@@ -19,6 +19,7 @@ public class PlayerControllerVer0 : MonoBehaviour
     //private CharacterController _charaCon;
     private FireControllerV2 _fireConV2;
     private BasicMovement _basicMove; // 敵の移動ロジックとプレイヤーの移動ロジックをある程度統一
+    private ItemInventoryController _inventory;
 
     //private int _HP;
     //private int HP
@@ -38,6 +39,7 @@ public class PlayerControllerVer0 : MonoBehaviour
         //_charaCon = GetComponent<CharacterController>();
         _fireConV2 = GetComponent<FireControllerV2>();
         _basicMove = GetComponent<BasicMovement>();
+        _inventory = GetComponent<ItemInventoryController>();
 
         //_DebugTextHandle = StandardTextPlane.Current.CreateTextHandle(-1); // 最優先"
         //HP = MaxHP;
@@ -56,6 +58,11 @@ public class PlayerControllerVer0 : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             _basicMove.Jump();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            _inventory.OpenInventory();
         }
 
         if (Input.GetMouseButtonDown(0) && PlayerSystem.Current.IsLocked == false)

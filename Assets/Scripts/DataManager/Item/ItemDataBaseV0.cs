@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
+[CreateAssetMenu(menuName = "ScriptableObjects/Item/PlainItem")]
 public class ItemDataBaseV0 : ScriptableObject
 {
     [SerializeField]
@@ -20,8 +22,17 @@ public class ItemDataBaseV0 : ScriptableObject
     }
     public virtual void Execute(string option, GameObject user, object arg = null)
     {
-        int idx = (int)arg;
-        var itemMgr = user.GetComponent<ItemManager>();
-        
+        if (option == "Throw")
+        {
+            int idx = (int)arg;
+            var itemMgr = user.GetComponent<ItemManager>();
+            if (itemMgr.Containers.Count <= idx)
+            {
+                Debug.Log("[ItemDataBaseV0] ŽÌ‚Ä‚æ‚¤‚Æ‚µ‚Ä‚¢‚éitemIdx‚ª•s³‚Å‚·");
+                return;
+            }
+            var con = itemMgr.Containers[idx];
+            itemMgr.TryRemoveItem(idx, con.Count);
+        }
     }
 }

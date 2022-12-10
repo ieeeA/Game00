@@ -809,15 +809,11 @@ MonoBehaviour:
   _SaleMoney: 100
   _BuyOptions:
   - _ItemData:
-      _StackMaxCount: 64
-      _Name: RedGem
-      _Description: 
-    _Money: 100
+      _ItemData: {fileID: 11400000, guid: 1c27d296103778d48b0dca35758c9dfe, type: 2}
+    _Money: 500
     _Count: 10
   - _ItemData:
-      _StackMaxCount: 64
-      _Name: BlueGem
-      _Description: 
+      _ItemData: {fileID: 11400000, guid: 8f320197d02642d4f98c2166abdd3e90, type: 2}
     _Money: 200
     _Count: 5
 --- !u!1 &922171502

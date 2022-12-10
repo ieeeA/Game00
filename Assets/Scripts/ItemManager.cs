@@ -8,24 +8,14 @@ using System;
 [Serializable]
 public class ItemData
 {
-    public int _StackMaxCount = 64;
-    public string _Name;
-    public string _Description;
-    public ItemDataBaseV0 _EquipmentData;
-
-    // 後方互換性のため一旦こうしておく（Item系が動作確認され次第回収してコメントアウトする）
-    public ItemData()
-    {
-
-    }
+    public int StackMaxCount => _ItemData._MaxCount;
+    public string Name => _ItemData._Name;
+    public string _Description => _ItemData._Name;
+    public ItemDataBaseV0 _ItemData;
 
     public ItemData(ItemDataBaseV0 data)
     {
-        // 後方互換性のため
-        _EquipmentData = data;
-        _StackMaxCount = data._MaxCount;
-        _Description = data._Description;
-        _Name = data._Name;
+        _ItemData = data;
     }
 }
 
@@ -81,7 +71,7 @@ public class ItemManager : MonoBehaviour
         // Nameが同一ならスタックする（MaxCountは今のところ判定はしない）
         foreach(var c in _Containers)
         {
-            if (c.Data._Name == data._Name)
+            if (c.Data.Name == data.Name)
             {
                 c.Count += count;
                 return;
@@ -129,7 +119,7 @@ public class ItemManager : MonoBehaviour
         string res = "[ItemContainers]";
         if (_Containers.Count != 0)
         {
-            res += _Containers.Select(x => Environment.NewLine + $"{x.Data._Name}({x.Count})").Aggregate((x, s) => s += x);
+            res += _Containers.Select(x => Environment.NewLine + $"{x.Data.Name}({x.Count})").Aggregate((x, s) => s += x);
         }
         return res;
     }

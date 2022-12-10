@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-[CreateAssetMenu(menuName = "ScritableObjects/Item/EquipmentItem")]
+[CreateAssetMenu(menuName = "ScriptableObjects/Item/EquipmentItem")]
 public class EquipmentItem : ItemDataBaseV0
 {
     [SerializeField]
@@ -14,7 +14,7 @@ public class EquipmentItem : ItemDataBaseV0
     {
         var list = base.GetOptions(user);
         list.Add("Equip");
-        list.Add("TakeOFf");
+        list.Add("TakeOff");
         return list;
     }
 
@@ -45,5 +45,6 @@ public class EquipmentItem : ItemDataBaseV0
             default:
                 break;
         }
+        base.Execute(option, user, arg);
     }
 }

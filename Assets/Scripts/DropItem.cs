@@ -5,10 +5,10 @@ using UnityEngine;
 public class DropItem : MonoBehaviour
 {
     [SerializeField]
-    private string ItemName;
+    public int Count;
 
     [SerializeField]
-    private int Count;
+    public ItemDataBaseV0 _Item;
 
     // Start is called before the first frame update
     void Start()
@@ -21,8 +21,8 @@ public class DropItem : MonoBehaviour
         var mgr = other.GetComponent<ItemManager>();
         if(mgr != null)
         {
-            mgr.AddItem(new ItemData() { _Name = ItemName }, Count);
-            EventDebugger.Current.AppendEventDebug($"[GetItem]{ItemName}({Count})");
+            mgr.AddItem(new ItemData(_Item), Count);
+            EventDebugger.Current.AppendEventDebug($"[GetItem]{_Item._Name}({Count})");
             GameObject.Destroy(gameObject);
             return;
         }

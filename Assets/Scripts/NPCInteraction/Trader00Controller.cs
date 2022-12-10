@@ -170,7 +170,7 @@ public class Trader00Controller : MonoBehaviour, IInteract
         PlayerGUIManager.Current.Dialog.WindowTitle = "¤l";
         PlayerGUIManager.Current.Dialog.SetOptions(
                 5,
-                $"{itemContainer.Data._Name}(Š”: {itemContainer.Count})" + " ‚ğ‚¢‚­‚Â”„‚é‚ñ‚¾‚¢H",
+                $"{itemContainer.Data.Name}(Š”: {itemContainer.Count})" + " ‚ğ‚¢‚­‚Â”„‚é‚ñ‚¾‚¢H",
                 new string[] {
                 "1ŒÂ",
                 "5ŒÂ",
@@ -264,7 +264,7 @@ public class Trader00Controller : MonoBehaviour, IInteract
     
     private string StringifyItemOption(ItemContainer item)
     {
-        return $"{item.Data._Name}x{item.Count}";
+        return $"{item.Data.Name}x{item.Count}";
     }
     #endregion
 }
@@ -279,7 +279,7 @@ public class BuyOption
 
     public string Stringify()
     {
-        return $"{_ItemData._Name}x{_Count}  {_Money}G";
+        return $"{_ItemData.Name}x{_Count}  {_Money}G";
     }
 }
 

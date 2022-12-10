@@ -28,7 +28,10 @@ public class WindowBaseBehavior : MonoBehaviour
 
     public virtual void Close()
     {
-        OnEnd?.Invoke();
+        if (gameObject.activeInHierarchy)
+        {
+            OnEnd?.Invoke();
+        }
         gameObject.SetActive(false);
     }
 

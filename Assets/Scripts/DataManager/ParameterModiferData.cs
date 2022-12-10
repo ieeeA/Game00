@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-[CreateAssetMenu(menuName = "ScritableObjects/ParameterModiferData")]
+[CreateAssetMenu(menuName = "ScriptableObjects/ParameterModiferData")]
 public class ParameterModiferData : ScriptableObject
 {
     [SerializeField]

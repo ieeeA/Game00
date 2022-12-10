@@ -10,5 +10,6 @@ public interface IStatusManager
 public class HPChangeInfo
 {
     public int ModifyValue { get; set; }
+    // ŒoŒ±’l‚Æ‚©‚»‚Ì•Ó—p
     public GameObject Sender { get; set; }
 }

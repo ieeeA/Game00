@@ -11,11 +11,9 @@ public class CollectItemGimmick : MonoBehaviour, IInteract
     private float _RecoveryInteraval;
 
     [SerializeField]
-    private string _Name;
+    private ItemDataBaseV0 _Item;
     [SerializeField]
     private int _Count;
-    [SerializeField]
-    private int _MaxStackCount;
 
     private bool _IsCollected = false;
 
@@ -35,7 +33,7 @@ public class CollectItemGimmick : MonoBehaviour, IInteract
             return;
         }
 
-        mgr.AddItem(new ItemData { _Name = _Name, _StackMaxCount = _MaxStackCount }, _Count);
+        mgr.AddItem(new ItemData(_Item), _Count);
         _CollectHead.SetActive(false);
 
         // 後々エフェクトの処理とかをここに

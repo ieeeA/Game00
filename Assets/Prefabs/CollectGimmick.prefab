@@ -493,9 +493,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _CollectHead: {fileID: 4736532416195557915}
   _RecoveryInteraval: 20
-  _Name: Mineral00
+  _Item: {fileID: 11400000, guid: 60d7bcc354edf8449af2ca0c5dd6d833, type: 2}
   _Count: 3
-  _MaxStackCount: 64
 --- !u!65 &4736532416918057762
 BoxCollider:
   m_ObjectHideFlags: 0

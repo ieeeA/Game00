@@ -21,6 +21,11 @@ public class EquipmentManagerV0 : MonoBehaviour
     private Dictionary<EquipmentPartType, EquipmentDataV0> _slotDictionary = new Dictionary<EquipmentPartType, EquipmentDataV0>();
     private Dictionary<EquipmentPartType, ParameterModifierGroup> _modifierGroupDict = new Dictionary<EquipmentPartType, ParameterModifierGroup>();
 
+    [SerializeField]
+    private bool _IsPlayer = false;
+    
+    private TextHandle _DebugHandle;
+
     public EquipmentDataV0 GetEquipmentData(EquipmentPartType type) => _slotDictionary[type];
 
     // Start is called before the first frame update
@@ -31,8 +36,26 @@ public class EquipmentManagerV0 : MonoBehaviour
         {
             _slotDictionary.Add(i, null);
         }
+
+        if (_IsPlayer)
+        {
+            _DebugHandle = StandardTextPlane.Current.CreateTextHandle();
+            StateStringify();
+        }
     }
 
+    private void StateStringify()
+    {
+        if (_IsPlayer)
+        {
+            _DebugHandle.Text = "[Equipment]" + Environment.NewLine;
+            foreach (var slot in _slotDictionary)
+            {
+                var name = slot.Value == null ? "no equip" : slot.Value.name;
+                _DebugHandle.Text += slot.Key + ":" + name + Environment.NewLine;
+            }
+        }
+    }
     public void Equip(EquipmentDataV0 equipment)
     {
         var targetSlot = equipment._AttachableType;
@@ -45,6 +68,8 @@ public class EquipmentManagerV0 : MonoBehaviour
 
         _paramBundle.Register(mdg);
         _modifierGroupDict[targetSlot] = mdg;
+
+        StateStringify();
     }
 
     public void TakeOff(EquipmentPartType slotType)
@@ -58,6 +83,9 @@ public class EquipmentManagerV0 : MonoBehaviour
         var mdg = _modifierGroupDict[slotType];
 
         _paramBundle.UnRegister(mdg);
+        _slotDictionary[slotType] = null;
         _modifierGroupDict[slotType] = null;
+
+        StateStringify();
     }
 }

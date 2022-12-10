@@ -5,7 +5,7 @@ using UnityEngine;
 using System.Linq;
 
 [Serializable]
-[CreateAssetMenu(menuName = "ScritableObjects/EquipmentDataV0")]
+[CreateAssetMenu(menuName = "ScriptableObjects/EquipmentDataV0")]
 public class EquipmentDataV0 : ScriptableObject
 {
     [SerializeField]
