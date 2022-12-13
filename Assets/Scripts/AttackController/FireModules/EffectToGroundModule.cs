@@ -15,14 +15,14 @@ public class EffectToGroundModule : FireTypeModule
     private Vector3 GetRaycastOrigin(GameObject owner)
     {
         var pos = owner.transform.position;
-        pos += Quaternion.AngleAxis(owner.transform.rotation.eulerAngles.y, Vector3.up) * Offset0;
+        pos += Quaternion.AngleAxis(owner.transform.rotation.eulerAngles.y, Vector3.up) * _CurrentState._Offset0;
         return pos;
     }
 
     public override void OnFire(GameObject owner)
     {
         var mgr = owner.GetComponent<TimerEffectManager>();
-        if (false == FieldUtil.GetPositionRaycastToTerrain(GetRaycastOrigin(owner), Range0, out _placement))
+        if (false == FieldUtil.GetPositionRaycastToTerrain(GetRaycastOrigin(owner), _CurrentState._Range0, out _placement))
         {
             Debug.Log("[EffectToGroundModule] Effectフィールドを配置できません。");
             return;
@@ -34,16 +34,16 @@ public class EffectToGroundModule : FireTypeModule
         {
             _ApplyMode = TimerEffect.ApplyMode.Overwrite,
             _IsDistinct = true,
-            _LifeTimer = ChargeTime,
+            _LifeTimer = _CurrentState._ChargeTime,
             _IsIterative = true,
-            _Interval = ChargeEffInterval,
+            _Interval = _CurrentState._ChargeEffInterval,
             _Owner = owner,
             _OnStart = null, // startはここでやるのでいらない
             _OnInterval = (owner, target, c) =>
             {
                 // チャージエフェクトを出す
                 Debug.Log("Charging!");
-                var eff = VFXManager.Current.Instantiate(ChargeEffId);
+                var eff = VFXManager.Current.Instantiate(_CurrentState._ChargeEffId);
                 eff.transform.position = owner.transform.position;
 
                 var t = CameraController.PlayerCameraCurrent.transform.forward;
@@ -63,7 +63,10 @@ public class EffectToGroundModule : FireTypeModule
 
         // TODO: 移動をロックする
         _locker = owner.GetComponent<PlayerSystem>();
-        _locker?.SetLockPlayerControl(true);
+        if (_locker != null)
+        {
+            _locker.IsMoveLockedSelf = true;
+        }
     }
 
     // 発射中も動けないので
@@ -71,11 +74,15 @@ public class EffectToGroundModule : FireTypeModule
     {
         Debug.Log("Shoot!!!");
 
-        var blow = ProjectileManager.Current.Instantiate<BasicPooledBehavior>(ProjectileId);
+        var blow = ProjectileManager.Current.Instantiate<BasicPooledBehavior>(_CurrentState._ProjectileId);
         blow.transform.position = _placement;
 
         // TODO
         // 効果時間分移動をロックする。その後解除する。
-        _locker?.SetLockPlayerControl(false);
+        _locker = owner.GetComponent<PlayerSystem>();
+        if (_locker != null)
+        {
+            _locker.IsMoveLockedSelf = false;
+        }
     }
 }

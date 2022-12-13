@@ -72,6 +72,7 @@ public class FireControllerV2 : MonoBehaviour
         // =============================================
         _ModuleDict.Add(FireModuleType.Blow, new BlowModule());
         _ModuleDict.Add(FireModuleType.EffectToGround, new EffectToGroundModule());
+        _ModuleDict.Add(FireModuleType.ShootBullet, new ShootBulletModule());
     }
 
     private void Start()
@@ -101,10 +102,18 @@ public class FireControllerV2 : MonoBehaviour
             {
                 _Current = 1;
             }
-            //if (Input.GetKeyDown(KeyCode.Alpha3))
-            //{
-            //    _Current = 2;
-            //}
+            if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                _Current = 2;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                _Current = 3;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha5))
+            {
+                _Current = 4;
+            }
 
             _handle.Text = "[FireControllerV2]" + Environment.NewLine;
             for (int i = 0; i < _ModuleStates.Count; i++)
@@ -123,24 +132,11 @@ public abstract class FireTypeModule
     // という感じにする。
 
     public abstract FireModuleType Type { get; }
-    protected string ProjectileId { get; set; } // Poolからオブジェクトを取り出すためのID
-    protected float ChargeTime { get; set; }
-    protected float ChargeEffInterval { get; set; }
-    protected string ChargeEffId { get; set; }
-    protected int HitLayerMask0 { get; set; }
-
-    public Vector3 Offset0 { get; set; } // 何らかのオフセット指定用
-    public float Range0 { get; set; } // 何らかの範囲指定用
+    protected ModuleState _CurrentState;
 
     public virtual void Configure(ModuleState state)
     {
-        ProjectileId = state._ProjectileId;
-        ChargeTime = state._ChargeTime;
-        ChargeEffInterval = state._ChargeEffInterval;
-        ChargeEffId = state._ChargeEffId;
-        HitLayerMask0 = LayerMask.GetMask(state._LayerNameList0);
-        Offset0 = state._Offset0;
-        Range0 = state._Range0;
+        _CurrentState = state;
     }
 
     // FireControllerが発射可能な状態か聞くためのもの

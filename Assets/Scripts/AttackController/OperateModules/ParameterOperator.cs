@@ -50,12 +50,43 @@ public class ParameterOperator : MonoBehaviour
         }
     }
 
+    public void SetExternalForce(Collider col)
+    {
+        if (TargetTags.Contains(col.tag))
+        {
+            // ˆêu‚¾‚¯‚ ‚½‚Á‚½‚Æ‚«‚É—Í‚ğ‰Á‚¦‚éTimerEffect‚ğ‚Â‚¯‚éB
+            var tem = col.GetComponent<TimerEffectManager>();
+            if (tem != null)
+            {
+                var bm = tem.GetComponent<BasicMovement>();
+                var eff = new TimerEffect("ExternalForce")
+                {
+                    _ApplyMode = TimerEffect.ApplyMode.Overwrite,
+                    _IsDistinct = false,
+                    _LifeTimer = _Time,
+                    _Owner = col.gameObject,
+                    _OnStart = null, // start‚Í‚±‚±‚Å‚â‚é‚Ì‚Å‚¢‚ç‚È‚¢
+                    _Context = bm,
+                    _OnEnd = (target, owner, c) =>
+                    {
+                        bm.ResetCrowdControl();
+                        Debug.Log("[ParameterOperator] stop externalforce");
+                    },
+                };
+                Debug.Log("[ParameterOperator] externalforce");
+                tem.Apply(eff);
+                bm.ExternalForce = _Value * transform.forward;
+            }
+        }
+    }
+
     public void AddDamage(Collider col)
     {
         if (TargetTags.Contains(col.tag))
         {
             var status = col.GetComponent(typeof(IStatusManager)) as IStatusManager;
-            status.ChangeHP(new HPChangeInfo() {
+            status.ChangeHP(new HPChangeInfo()
+            {
                 ModifyValue = (int)_Value,
                 Sender = gameObject
             });

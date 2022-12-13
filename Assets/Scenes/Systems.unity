@@ -148,6 +148,9 @@ MonoBehaviour:
     - _Id: ChargeEffect
       _PooledObject: {fileID: 1292167238657517966, guid: ac18c737678f8ce4b9cfa58b26eb93c7, type: 3}
       _Count: 20
+    - _Id: ExplodeEffect
+      _PooledObject: {fileID: 6174904831602933608, guid: f92c5ff49bf814a4c90e857b0f4c4168, type: 3}
+      _Count: 5
     _Folder: {fileID: 29593621}
 --- !u!1001 &136570024
 PrefabInstance:
@@ -838,6 +841,15 @@ MonoBehaviour:
     - _Id: PFireBlow
       _PooledObject: {fileID: 1618844621403035070, guid: dc5797566e60dc440a08cb929f2e271d, type: 3}
       _Count: 5
+    - _Id: PProjectile00
+      _PooledObject: {fileID: 6209673786714499525, guid: 8d00bed562cab444a97f599389064b51, type: 3}
+      _Count: 10
+    - _Id: PProjectile01
+      _PooledObject: {fileID: 6209673786714499525, guid: 76bc66c235a31cb4ca5ed0890ae7b884, type: 3}
+      _Count: 7
+    - _Id: PBlowForceSample00
+      _PooledObject: {fileID: 7208884795330143219, guid: 61ce97b8bc26a0d439075694bbd2ec90, type: 3}
+      _Count: 5
     _Folder: {fileID: 1113368100}
 --- !u!114 &1305910105 stripped
 MonoBehaviour:
@@ -1066,44 +1078,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5193621411789187267, guid: baefd307c8b9b9e489ce9d13dac39c36, type: 3}
   m_PrefabInstance: {fileID: 1757804018}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1757804034
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1757804019}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a15a84c88b7fc4d45a6c301a640c5ff6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _IsPlayer: 1
---- !u!114 &1757804035
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1757804019}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0556e77f434c9342a0b5b6dd74faac5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _InitialParameter: []
---- !u!114 &1757804036
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1757804019}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0fb494fe593880b4a8c844b99f0c0cdb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1808639114
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1163,7 +1137,7 @@ RectTransform:
   - {fileID: 1650432799}
   - {fileID: 609411307}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1246,7 +1220,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6617662600347226125, guid: 889e927d179f8e645a3947fd3c39412e, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6617662600347226125, guid: 889e927d179f8e645a3947fd3c39412e, type: 3}
       propertyPath: m_AnchorMax.x

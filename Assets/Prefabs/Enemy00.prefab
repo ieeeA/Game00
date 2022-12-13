@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 4825350921780600017}
   - component: {fileID: 653504307158246983}
   - component: {fileID: 7080231864371140363}
+  - component: {fileID: 156693329325499505}
   m_Layer: 0
   m_Name: Enemy00
   m_TagString: Enemy
@@ -191,9 +192,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1166d71d28f6aed489c8bc7584f9a341, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _HoriAcc: 2
-  _Speed: 3
-  _MaxHoriSpeed: 4
+  _HoriAcc: 0.7
+  _Speed: 1.5
+  _MaxHoriSpeed: 3
   _Gravity: 5
   _JumpSpeed: 2
   _HoriFrict: 5
@@ -239,6 +240,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 156693329325499505}
+        m_TargetAssemblyTypeName: DataOperator, Assembly-CSharp
+        m_MethodName: DropItem
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 7080231864371140363}
         m_TargetAssemblyTypeName: DataOperator, Assembly-CSharp
         m_MethodName: Dead
@@ -269,3 +282,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _DropItemPrefab: {fileID: 5824682473872646264, guid: ea95f8ce215d9d74d8eda553e7795ddc, type: 3}
   _DropOffset: {x: 0, y: 0.5, z: 0}
+--- !u!114 &156693329325499505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7046917492248239541}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a39212bfc94b0ee4bbf615879ee02982, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _DropItemPrefab: {fileID: 2732421818227259266, guid: 3dd1b99cde7197e46bde516a0b67259d, type: 3}
+  _DropOffset: {x: 0.5, y: 0.5, z: 0}

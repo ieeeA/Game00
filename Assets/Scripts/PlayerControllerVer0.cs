@@ -77,14 +77,13 @@ public class PlayerControllerVer0 : MonoBehaviour
 
     private Vector3 GetInputVect()
     {
-        if (PlayerSystem.Current.IsLocked == false)
+        var hori = 0.0f; var vert = 0.0f;
+        if (PlayerSystem.Current.IsMoveLocked == false)
         {
-            var hori = Input.GetAxisRaw("Horizontal");
-            var vert = Input.GetAxisRaw("Vertical");
-
-            return _camera.FrontXZ * vert + _camera.RightXZ * hori;
+            hori = Input.GetAxisRaw("Horizontal");
+            vert = Input.GetAxisRaw("Vertical");
         }
-        return Vector3.zero;
+        return _camera.FrontXZ * vert + _camera.RightXZ * hori;
     }
 
     //public void Hit(object bullet, ProjectileHitInfo hitInfo)

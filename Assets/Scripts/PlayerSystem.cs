@@ -12,6 +12,11 @@ public class PlayerSystem : MonoBehaviour
     public static PlayerSystem Current => _Current;
 
     public bool IsLocked => Cursor.lockState != CursorLockMode.Locked;
+    public bool IsCameraLocked => IsLocked || IsCameraLockedSelf;
+    public bool IsMoveLocked => IsLocked || IsMoveLockedSelf;
+
+    public bool IsCameraLockedSelf { get; set; }
+    public bool IsMoveLockedSelf { get; set; }
 
     private void Awake()
     {

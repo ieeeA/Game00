@@ -3,6 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// TODO:
+/// これ絶対FireTypeModuleごとに生成するようにした方がいい...。
+/// バトルの方向性が固まったらリファクタをはさもう
+/// </summary>
 
 [Serializable]
 [CreateAssetMenu(menuName = "ScriptableObjects/ModuleState")]
@@ -29,6 +34,8 @@ public class ModuleState : ScriptableObject
     public Vector3 _Offset0; // 何らかのオフセット指定用
     [SerializeField]
     public float _Range0; // 何らかの範囲指定用
+    [SerializeField]
+    public float _Speed0; // 何らかのスピード指定
 
     public virtual bool CanFire()
     {

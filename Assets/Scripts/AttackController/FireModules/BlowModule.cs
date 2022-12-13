@@ -10,6 +10,7 @@ public class BlowModule : FireTypeModule
     // TODO:
     // そのうちNPCとPlayer両用にするので、なんかのInterfaceに_lockerを変える
     private PlayerSystem _locker;
+    private Vector3 _PrevCameraForward;
 
     public override void OnFire(GameObject owner)
     {
@@ -21,19 +22,19 @@ public class BlowModule : FireTypeModule
         {
             _ApplyMode = TimerEffect.ApplyMode.Overwrite,
             _IsDistinct = true,
-            _LifeTimer = ChargeTime,
+            _LifeTimer = _CurrentState._ChargeTime,
             _IsIterative = true,
-            _Interval = ChargeEffInterval,
+            _Interval = _CurrentState._ChargeEffInterval,
             _Owner = owner,
             _OnStart = null, // startはここでやるのでいらない
             _OnInterval = (owner, target, c) =>
             {
                 // チャージエフェクトを出す
                 Debug.Log("Charging!");
-                var eff = VFXManager.Current.Instantiate(ChargeEffId);
+                var eff = VFXManager.Current.Instantiate(_CurrentState._ChargeEffId);
                 eff.transform.position = owner.transform.position;
 
-                var t = CameraController.PlayerCameraCurrent.transform.forward;
+                var t = _PrevCameraForward = CameraController.PlayerCameraCurrent.transform.forward;
                 t.y = 0;
                 t.Normalize();
                 eff.transform.LookAt(t + eff.transform.position);
@@ -50,24 +51,31 @@ public class BlowModule : FireTypeModule
 
         // TODO: 移動をロックする
         _locker = owner.GetComponent<PlayerSystem>();
-        _locker?.SetLockPlayerControl(true);
+        if (_locker != null)
+        {
+            _locker.IsMoveLockedSelf = true;
+        }
     }
 
     // 発射中も動けないので
     protected void OnFired(GameObject owner)
     {
         Debug.Log("Shoot!!!");
-        var blow = ProjectileManager.Current.Instantiate<BasicPooledBehavior>(ProjectileId);
+        var blow = ProjectileManager.Current.Instantiate<BasicPooledBehavior>(_CurrentState._ProjectileId);
         blow.transform.position = owner.transform.position;
         blow.transform.rotation = owner.transform.rotation;
 
-        var t = CameraController.PlayerCameraCurrent.transform.forward;
+        var t = _PrevCameraForward;
         t.y = 0;
         t.Normalize();
         blow.transform.LookAt(t + blow.transform.position);
 
         // TODO
         // 効果時間分移動をロックする。その後解除する。
-        _locker?.SetLockPlayerControl(false);
+        _locker = owner.GetComponent<PlayerSystem>();
+        if (_locker != null)
+        {
+            _locker.IsMoveLockedSelf = false;
+        }
     }
 }

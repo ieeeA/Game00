@@ -95,7 +95,7 @@ public class AreaEffector : MonoBehaviour
             case AreaType.Box:
                 return FieldUtil.SearchBoxCollider(
                     transform.position + transform.rotation * _LocalOffset, 
-                    _HalfExts, 
+                    _HalfExts * 2, 
                     transform.rotation);
 
             default:
