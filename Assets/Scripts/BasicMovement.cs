@@ -83,7 +83,7 @@ public class BasicMovement : MonoBehaviour
     {
         var horiVel = HoriSpeed * _Speed;
 
-        if (_Threshold < horiVel.magnitude)
+        if (_Threshold < horiVel.magnitude && _Threshold < OwnerScale)
         {
             transform.LookAt(transform.position + new Vector3(horiVel.x, 0, horiVel.y));
         }

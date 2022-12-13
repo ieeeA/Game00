@@ -6515,6 +6515,10 @@ PrefabInstance:
       propertyPath: _PathObject
       value: 
       objectReference: {fileID: 1881389858}
+    - target: {fileID: 3790551783570019626, guid: 885183c71b02aad438bfa7b524854c02, type: 3}
+      propertyPath: _ReachRange
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 4061075963300489317, guid: 885183c71b02aad438bfa7b524854c02, type: 3}
       propertyPath: m_Name
       value: kinosisiAlpha

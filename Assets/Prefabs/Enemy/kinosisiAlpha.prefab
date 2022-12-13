@@ -687,13 +687,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _IdleInterval: 3
-  _ReachRange: 4
-  _GoalRange: 2
+  _ReachRange: 5
+  _GoalRange: 3
   _PathObject: {fileID: 0}
   _Gravity: 5
   _IsIgnoreNav: 0
   _SearchRange: 10
   _LostRage: 20
+  _TargetTag: Player
   _State: 0
   _PatrolState: 0
   _IdleTimer: 0
@@ -820,7 +821,7 @@ MonoBehaviour:
   _Gravity: 5
   _JumpSpeed: 1
   _HoriFrict: 5
-  _Threshold: 0.1
+  _Threshold: 0.3
   _isGroundMonitor: 0
 --- !u!114 &919132148644210975
 MonoBehaviour:

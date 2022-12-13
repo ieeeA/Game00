@@ -13,3 +13,9 @@ public class HPChangeInfo
     // ŒoŒ±’l‚Æ‚©‚»‚Ì•Ó—p
     public GameObject Sender { get; set; }
 }
+
+public class ResistanceChangeInfo
+{
+    public int ModifyValue { get; set; }
+    public GameObject Sender { get; set; }
+}

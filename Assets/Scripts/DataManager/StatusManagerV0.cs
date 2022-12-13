@@ -8,6 +8,9 @@ public class StatusManagerV0 : MonoBehaviour, IStatusManager
     [SerializeField]
     private int _MaxHP;
     [SerializeField]
+    private int _MaxRegistance; // ノックアウト状態までの抵抗値
+
+    [SerializeField]
     public UnityEvent _OnDead;
     [SerializeField]
     public UnityEvent<HPChangeInfo> _OnChangeHP; // エフェクトとか出す

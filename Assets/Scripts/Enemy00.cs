@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.AI;
+using System.Linq;
 
 [RequireComponent(typeof(BasicMovement))]
 [RequireComponent(typeof(Rigidbody))]
@@ -36,11 +37,14 @@ public class Enemy00 : MonoBehaviour, IProjectileHit
     private float _SearchRange = 10.0f;
     [SerializeField]
     private float _LostRage = 20.0f;
+    [SerializeField]
+    private string _TargetTag;
 
     private float _VerSpeed = 0.0f;
 
 
-    public enum Enemy00State {
+    public enum Enemy00State
+    {
         Patrol,
         Attack,
         Dead
@@ -87,8 +91,9 @@ public class Enemy00 : MonoBehaviour, IProjectileHit
 
     void TransitState(Enemy00State state)
     {
+        Debug.Log($"[Enemy00][TransitState] transit to {state}");
         //遷移時の状態初期化処理とか
-        switch(state)
+        switch (state)
         {
             case Enemy00State.Patrol:
                 InitPatrolState();
@@ -98,6 +103,7 @@ public class Enemy00 : MonoBehaviour, IProjectileHit
             case Enemy00State.Dead:
                 break;
         }
+        _State = state;
     }
 
     #region Patrol関連
@@ -167,12 +173,12 @@ public class Enemy00 : MonoBehaviour, IProjectileHit
     void UpdateWalk()
     {
         // ゴールについたらパスを無効にする
-        if (Vector3.Distance(transform.position, _NextDest.Value) <= _GoalRange || _Nav.isStopped)
+        if (Vector3.Distance(transform.position, _NextDest.Value) <= _GoalRange)
         {
             TransitPatrolState(Enemy00PatrolState.Idle);
             return;
         }
-        MoveDelta();  
+        MoveDelta();
     }
 
     #region Actions
@@ -186,13 +192,6 @@ public class Enemy00 : MonoBehaviour, IProjectileHit
             _Nav.SetDestination(dest);
         }
     }
-    public void MoveDelta()
-    {
-        // 移動処理をこのへんに適当に書く（後々多分ステートマシンでやることになると思うけど）
-        // ステアリングベクトルに向かって進むようにする。
-        _Mover.DesiredDirection = (_NextDest.Value - transform.position).normalized;
-        
-    }
     #endregion
     #endregion
 
@@ -200,7 +199,9 @@ public class Enemy00 : MonoBehaviour, IProjectileHit
     #region AttackState
     [SerializeField]
     private Enemy00AttackState _AttackState = Enemy00AttackState.Track;
+    [SerializeField]
     private GameObject _Target = null;
+    [SerializeField]
     private float _AttackRange = 3.0f;
     #endregion
 
@@ -241,28 +242,93 @@ public class Enemy00 : MonoBehaviour, IProjectileHit
     void UpdateTrack()
     {
         // 射程内に入ったらAttackステートへ遷移
+        if (_Target == null)
+        {
+            Debug.LogError("[Enemy00][UpdateTrack] AttackStateで_Targetがnullです。");
+            TransitState(Enemy00State.Patrol); // エラー保険処理
+            return;
+        }
+
+        // 十分近づいたら攻撃状態に遷移する
+        if (Vector3.Distance(transform.position, _Target.transform.position) < _AttackRange)
+        {
+            TransitAttackState(Enemy00AttackState.Attack);
+            return;
+        }
+
+        // 毎回追跡のために位置情報を更新する。
+        _Nav.SetDestination(_Target.transform.position);
+        MoveDelta();
     }
 
     void UpdateShoot()
     {
         // 攻撃が終了したらTrackへ遷移
+        Debug.LogWarning("[Enemy00][UpdateTrack] UpdateShootが未実装です。");
+        TransitAttackState(Enemy00AttackState.Track);
+    }
+    #endregion
+
+    #region Util
+    private float _SearchInterval = 1.0f;
+    private float _SearchTimer = 0.0f;
+
+    void UpdateSearchTarget()
+    {
+        if (_Target != null && _Target.activeInHierarchy)
+        {
+            if (Vector3.Distance(_Target.transform.position, transform.position) > _LostRage)
+            {
+                _Target = null;
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        _SearchTimer -= Time.deltaTime;
+        if (_SearchTimer > 0)
+        {
+            return;
+        }
+        _SearchTimer = _SearchInterval + Random.Range(0, 0.1f); // スパイク対策一斉に探索処理が入るのを防ぐ
+        var objs = FieldUtil.Search(transform.position, _SearchRange, _TargetTag);
+        if (objs.Length == 0)
+        {
+            _Target = null;
+            return;
+        }
+        _Target = objs[0];
+    }
+
+    public void MoveDelta()
+    {
+        // 移動処理をこのへんに適当に書く（後々多分ステートマシンでやることになると思うけど）
+        // ステアリングベクトルに向かって進むようにする。
+        _Mover.DesiredDirection = (_Nav.steeringTarget - transform.position).normalized;
     }
     #endregion
 
     // Update is called once per frame
     void Update()
     {
-        // ここがBehaviorTreeでいうところのルートノード
-        // 毎回発見/喪失チェック
-        // if (cond)
-
-        // if (cond)
+        UpdateSearchTarget();
         switch (_State)
         {
             case Enemy00State.Patrol:
+                if (_Target != null)
+                {
+                    TransitState(Enemy00State.Attack);
+                }
                 UpdatePatrol();
                 break;
             case Enemy00State.Attack:
+                if (_Target == null)
+                {
+                    TransitState(Enemy00State.Patrol);
+                }
+                UpdateAttack();
                 break;
             case Enemy00State.Dead:
                 break;
