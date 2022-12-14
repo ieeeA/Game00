@@ -2,17 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
 public enum ParameterType
 {
-    Attack = 0, // 攻撃力
     MaxHP, // 最大HP
     AutoRegenerate, // 自動回復量(1sec)
-    SlowPower, // 速度低下効果
+    MineHervestRate, // 鉱石回収効率
+
+    Attack, // 攻撃力
+    AoEScale, // AoEのスケール
     CastSpeed, // スペル発動スピード
     CoolDownRecovery, // クールダウン回復
-    MineHervestRate, // 鉱石回収効率
-    AoEScale, // AoEのスケール
+
+    MoveOwnerScale, // 移動力スケール（移動速度低下とかに使う）
+    // TODO: このParameter処理系絶対FloatIntVectorかまとめて扱えるようにBitValueみたい構造体を用意した方がいい
+    MoveExternalForceX, // 外力X
+    MoveExternalForceY, // 外力Y
+    MoveExternalForceZ, // 外力Z
+
     MaxParameterType, // 最大タイプ
 }
 
@@ -26,6 +34,20 @@ public class ParameterModifier
     {
         Type = type;
         Value = value;
+        Tag = tag;
+    }
+
+    /// <summary>
+    /// floatを指定できるようになっているがParamterBundleV0の都合上完全にその値が指定されるわけではない
+    /// （分解能が1-0で100分割になる）
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="value"></param>
+    /// <param name="tag"></param>
+    public ParameterModifier(ParameterType type, float value, string tag = "")
+    {
+        Type = type;
+        Value = (int)(value * ParameterBundleV0.FloatDivider);
         Tag = tag;
     }
 
@@ -55,6 +77,15 @@ public class ParameterModifierGroup
     }
 }
 
+[Serializable]
+public class ParameterBundleV0InitialParamter
+{
+    [SerializeField]
+    public ParameterType _ParameterType;
+    [SerializeField, Tooltip("小数点付きになるやつは100倍して設定してください。")]
+    public int _Value;
+}
+
 /// <summary>
 /// キャラクターの総合パラメータ管理クラス
 /// </summary>
@@ -64,17 +95,33 @@ public class ParameterBundleV0 : MonoBehaviour
     private List<ParameterModifierGroup> _ModifierGroup = new List<ParameterModifierGroup>();
     private Dictionary<ParameterType, int> _Parameter = new Dictionary<ParameterType, int>();
 
-    private const int FloatDivider = 100;
+    public static readonly int FloatDivider = 100;
 
-    // 初期パラメータ指定
+    // 初期パラメータ指定（加算指定するもの）
     [SerializeField]
-    public ParameterModiferData[] _InitialParameter;
+    public ParameterBundleV0InitialParamter[] _InitialParameter;
 
     private void Awake()
     {
         for (ParameterType i = 0; i < ParameterType.MaxParameterType; i++)
         {
-            _Parameter.Add(i, 0);
+            _Parameter.Add(i, GetDefaultParameter(i));
+        }
+        ApplyInitialParameters();
+    }
+
+    // 設定し忘れないよう、絶対その値と決まっている者はここで設定する
+    // OwnerScaleとか
+    private int GetDefaultParameter(ParameterType type)
+    {
+        switch (type)
+        {
+            case ParameterType.MoveOwnerScale:
+                return 100;
+            case ParameterType.MaxHP:
+                return 100;
+            default:
+                return 0;
         }
     }
 
@@ -90,6 +137,20 @@ public class ParameterBundleV0 : MonoBehaviour
     public float GetParamterFloat(ParameterType type)
     {
         if (_Parameter.ContainsKey(type))
+        {
+            return (float)_Parameter[type] / FloatDivider;
+        }
+        return 0.0f;
+    }
+
+    /// <summary>
+    /// 0以下の値になっていた場合0を返す
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public float GetParamterFloatOrZero(ParameterType type)
+    {
+        if (_Parameter.ContainsKey(type) && _Parameter[type] > 0)
         {
             return (float)_Parameter[type] / FloatDivider;
         }
@@ -152,14 +213,14 @@ public class ParameterBundleV0 : MonoBehaviour
     {
         for (ParameterType i = 0; i < ParameterType.MaxParameterType; i++)
         {
-            _Parameter[i] = 0;
+            _Parameter[i] = GetDefaultParameter(i);
         }
     }
     private void ApplyInitialParameters()
     {
         foreach(var p in _InitialParameter)
         {
-            var m = p.CreateModifier(tag = "initial");
+            var m = new ParameterModifier(p._ParameterType, p._Value, tag = "initial");
             Register(m);
         }
     }

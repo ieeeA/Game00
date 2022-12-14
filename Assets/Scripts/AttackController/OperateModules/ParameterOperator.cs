@@ -28,24 +28,12 @@ public class ParameterOperator : MonoBehaviour
             var tem = col.GetComponent<TimerEffectManager>();
             if (tem != null)
             {
-                var bm = tem.GetComponent<BasicMovement>();
-                var eff = new TimerEffect("Slow")
-                {
-                    _ApplyMode = TimerEffect.ApplyMode.Overwrite,
-                    _IsDistinct = false,
-                    _LifeTimer = _Time,
-                    _Owner = col.gameObject,
-                    _OnStart = null, // start‚Í‚±‚±‚Å‚â‚é‚Ì‚Å‚¢‚ç‚È‚¢
-                    _Context = bm,
-                    _OnEnd = (target, owner, c) =>
-                    {
-                        bm.ResetCrowdControl();
-                        Debug.Log("[ParameterOperator] stop slow");
-                    },
-                };
-                Debug.Log("[ParameterOperator] slow");
-                tem.Apply(eff);
-                bm.OwnerScale = _Value;
+                // OwnerScale‚ð0‚É‚·‚é
+                var modifier = new ParameterModifier(ParameterType.MoveOwnerScale, -1.0f);
+                tem.ApplyParameterModifier(
+                    _Time,
+                    modifier,
+                    "SlowParameter");
             }
         }
     }
@@ -58,24 +46,17 @@ public class ParameterOperator : MonoBehaviour
             var tem = col.GetComponent<TimerEffectManager>();
             if (tem != null)
             {
-                var bm = tem.GetComponent<BasicMovement>();
-                var eff = new TimerEffect("ExternalForce")
-                {
-                    _ApplyMode = TimerEffect.ApplyMode.Overwrite,
-                    _IsDistinct = false,
-                    _LifeTimer = _Time,
-                    _Owner = col.gameObject,
-                    _OnStart = null, // start‚Í‚±‚±‚Å‚â‚é‚Ì‚Å‚¢‚ç‚È‚¢
-                    _Context = bm,
-                    _OnEnd = (target, owner, c) =>
-                    {
-                        bm.ResetCrowdControl();
-                        Debug.Log("[ParameterOperator] stop externalforce");
-                    },
-                };
+                var force = _Value * transform.forward;
+                var modifierX = new ParameterModifier(ParameterType.MoveExternalForceX, force.x);
+                var modifierY = new ParameterModifier(ParameterType.MoveExternalForceY, force.y);
+                var modifierZ = new ParameterModifier(ParameterType.MoveExternalForceZ, force.z);
+                var modifierGroup = new ParameterModifierGroup(new[] { modifierX, modifierY, modifierZ });
+
                 Debug.Log("[ParameterOperator] externalforce");
-                tem.Apply(eff);
-                bm.ExternalForce = _Value * transform.forward;
+                tem.ApplyParameterModifier(
+                    _Time,
+                    modifierGroup,
+                    "SetExternalForce");
             }
         }
     }
@@ -91,6 +72,20 @@ public class ParameterOperator : MonoBehaviour
                 Sender = gameObject
             });
             Debug.Log("[ParameterOperator] damage!");
+        }
+    }
+
+    public void AddResistanceDamage(Collider col)
+    {
+        if (TargetTags.Contains(col.tag))
+        {
+            var status = col.GetComponent(typeof(IStatusManager)) as IStatusManager;
+            status.ChangeResistance(new ResistanceChangeInfo()
+            {
+                ModifyValue = (int)_Value,
+                Sender = gameObject
+            });
+            Debug.Log("[ParameterOperator] resistance damage!");
         }
     }
 }

@@ -134,18 +134,3 @@ public class TimerEffect
         return $"[{_Id}] Distinct::{_IsDistinct} ApplyMode::{_ApplyMode} Iterative::{_IsIterative} Interval::{_Interval} Lifetime::{_LifeTimer}";
     }
 }
-
-// 待って効果発動とか、そういう簡単なEffectを短いコードで作れるようにしておく
-public static class TimerEffectUtility
-{
-    public static TimerEffect CreateWaitEffect(
-            string id,
-            float lifetime,
-            System.Action<GameObject, GameObject, object> acton
-        )
-    {
-        return new TimerEffect(id)
-        {
-        };
-    }
-}

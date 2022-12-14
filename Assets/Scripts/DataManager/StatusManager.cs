@@ -5,6 +5,7 @@ using UnityEngine;
 public interface IStatusManager
 {
     void ChangeHP(HPChangeInfo changeInfo);
+    void ChangeResistance(ResistanceChangeInfo changeInfo);
 }
 
 public class HPChangeInfo

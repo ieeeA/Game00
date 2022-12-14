@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// 多数のTimerEffectManagerからOwnerScaleにアクセスされるとハマったりするので
+// OwnerScale/ExternalForceをParameterBundle依存にする
+
+[RequireComponent(typeof(ParameterBundleV0))] 
 // 基礎的な方向制御を行うスクリプト
 public class BasicMovement : MonoBehaviour
 {
@@ -36,9 +40,21 @@ public class BasicMovement : MonoBehaviour
     public Vector3 DesiredDirection { get; set; }
 
     // CC用移動力スケール係数
-    public float OwnerScale { get; set; }
+    public float OwnerScale => _ParameterBundle.GetParamterFloatOrZero(ParameterType.MoveOwnerScale);
     // CC用外力
-    public Vector3 ExternalForce { get; set; }
+    public Vector3 ExternalForce
+    {
+        get
+        {
+            Vector3 t;
+            t.x = _ParameterBundle.GetParamterFloat(ParameterType.MoveExternalForceX);
+            t.y = _ParameterBundle.GetParamterFloat(ParameterType.MoveExternalForceY);
+            t.z = _ParameterBundle.GetParamterFloat(ParameterType.MoveExternalForceZ);
+            return t;
+        }
+    }
+
+    private ParameterBundleV0 _ParameterBundle;
 
     private void OnDrawGizmos()
     {
@@ -61,8 +77,7 @@ public class BasicMovement : MonoBehaviour
     void Start()
     {
         _CharaCon = GetComponent<CharacterController>();
-        OwnerScale = 1.0f;
-        ExternalForce = Vector3.zero;
+        _ParameterBundle = GetComponent<ParameterBundleV0>();
     }
 
     // Update is called once per frame
@@ -103,11 +118,5 @@ public class BasicMovement : MonoBehaviour
         {
             VerSpeed -= _Gravity * Time.deltaTime;
         }
-    }
-
-    public void ResetCrowdControl()
-    {
-        OwnerScale = 1.0f;
-        ExternalForce = Vector3.zero;
     }
 }
