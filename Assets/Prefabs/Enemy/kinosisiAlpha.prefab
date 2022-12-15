@@ -600,6 +600,8 @@ GameObject:
   - component: {fileID: 3790551783570019619}
   - component: {fileID: 919132148644210975}
   - component: {fileID: 9207387044073437197}
+  - component: {fileID: 5927965918136291514}
+  - component: {fileID: 4117124890394395255}
   m_Layer: 6
   m_Name: kinosisiAlpha
   m_TagString: Enemy
@@ -699,6 +701,8 @@ MonoBehaviour:
   _PatrolState: 0
   _IdleTimer: 0
   _AttackState: 0
+  _Target: {fileID: 0}
+  _AttackRange: 3
 --- !u!114 &3790551783570019624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -713,6 +717,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _DropItemPrefab: {fileID: 5824682473872646264, guid: b56035cec404e4b4681802e806e3c13d, type: 3}
   _DropOffset: {x: 0, y: 1, z: 0}
+  _KnockoutTime: 5
+  _CancelableTypes: 
 --- !u!114 &3790551783570019631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -725,7 +731,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd17b1b9557e4c74d9dbb8a6a87bd22b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _MaxHP: 0
   _OnDead:
     m_PersistentCalls:
       m_Calls:
@@ -765,7 +770,37 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  _OnKnockout:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4117124890394395255}
+        m_TargetAssemblyTypeName: VFXPlayer, Assembly-CSharp
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 3790551783570019624}
+        m_TargetAssemblyTypeName: DataOperator, Assembly-CSharp
+        m_MethodName: Knockout
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   _OnChangeHP:
+    m_PersistentCalls:
+      m_Calls: []
+  _OnChangeResistance:
     m_PersistentCalls:
       m_Calls: []
   _IsPlayerDebug: 0
@@ -837,6 +872,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _DropItemPrefab: {fileID: 2732421818227259266, guid: 3dd1b99cde7197e46bde516a0b67259d, type: 3}
   _DropOffset: {x: 0.5, y: 1, z: 0}
+  _KnockoutTime: 10
+  _CancelableTypes: 
 --- !u!65 &9207387044073437197
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -850,6 +887,32 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2, y: 3.3819854, z: 5.6929016}
   m_Center: {x: 0, y: 1.1909925, z: 0.24412537}
+--- !u!114 &5927965918136291514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4061075963300489317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0556e77f434c9342a0b5b6dd74faac5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _InitialParameter: []
+--- !u!114 &4117124890394395255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4061075963300489317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68f8b945f3c1caa49a3dc217ef06f7bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _VfxId: KnockoutEffect
 --- !u!1 &4546064207797823312
 GameObject:
   m_ObjectHideFlags: 0

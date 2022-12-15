@@ -151,6 +151,9 @@ MonoBehaviour:
     - _Id: ExplodeEffect
       _PooledObject: {fileID: 6174904831602933608, guid: f92c5ff49bf814a4c90e857b0f4c4168, type: 3}
       _Count: 5
+    - _Id: KnockoutEffect
+      _PooledObject: {fileID: 4126393835675833669, guid: cfe28d6c830515447910ce78d6f990b1, type: 3}
+      _Count: 5
     _Folder: {fileID: 29593621}
 --- !u!1001 &136570024
 PrefabInstance:

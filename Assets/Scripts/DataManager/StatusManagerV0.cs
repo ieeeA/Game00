@@ -4,15 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(ParameterBundleV0))]
 public class StatusManagerV0 : MonoBehaviour, IStatusManager
 {
-    [SerializeField]
-    private int _MaxHP;
-    [SerializeField]
-    private int _MaxResistance;
-    [SerializeField]
-    private int _MaxRegistance; // ノックアウト状態までの抵抗値
-
     [SerializeField]
     public UnityEvent _OnDead;
     [SerializeField]
@@ -25,8 +19,8 @@ public class StatusManagerV0 : MonoBehaviour, IStatusManager
     [SerializeField]
     public bool _IsPlayerDebug = false;
 
-    public int MaxHP => _MaxHP;
-    public int MaxResistance => _MaxRegistance;
+    public int MaxHP => _Param.GetParamter(ParameterType.MaxHP);
+    public int MaxResistance => _Param.GetParamter(ParameterType.MaxResistance);
     public int HP
     {
         get => _HP;
@@ -50,9 +44,11 @@ public class StatusManagerV0 : MonoBehaviour, IStatusManager
     private int _HP;
     private int _Resistance;
     private TextHandle _DebugTextHandle = null;
+    private ParameterBundleV0 _Param;
 
     public void Start()
     {
+        _Param = GetComponent<ParameterBundleV0>();
         if (_IsPlayerDebug)
         {
             _DebugTextHandle = StandardTextPlane.Current.CreateTextHandle(-1);
@@ -63,6 +59,7 @@ public class StatusManagerV0 : MonoBehaviour, IStatusManager
     public void ResetStatus()
     {
         HP = MaxHP;
+        Resistance = MaxResistance;
     }
 
     private void OnUpdatePresentation()
@@ -75,7 +72,6 @@ public class StatusManagerV0 : MonoBehaviour, IStatusManager
         }
     }
 
-
     public void ChangeHP(HPChangeInfo changeInfo)
     {
         if (HP < 0)
@@ -84,7 +80,7 @@ public class StatusManagerV0 : MonoBehaviour, IStatusManager
             return;
         }
 
-        HP += changeInfo.ModifyValue;
+        HP = Math.Clamp(HP + changeInfo.ModifyValue, -100, MaxHP);
         _OnChangeHP?.Invoke(changeInfo);
         if (HP < 0)
         {
@@ -94,17 +90,11 @@ public class StatusManagerV0 : MonoBehaviour, IStatusManager
 
     public void ChangeResistance(ResistanceChangeInfo changeInfo)
     {
-        if (Resistance < 0)
-        {
-            Debug.Log("AlreadDead");
-            return;
-        }
-
-        Resistance += changeInfo.ModifyValue;
+        Resistance = Math.Clamp(Resistance + changeInfo.ModifyValue, -100, MaxResistance);
         _OnChangeResistance?.Invoke(changeInfo);
         if (Resistance < 0)
         {
-            _OnDead?.Invoke();
+            _OnKnockout?.Invoke();
         }
     }
 }

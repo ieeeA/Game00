@@ -126,7 +126,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6209673786714499530}
         m_TargetAssemblyTypeName: ParameterOperator, Assembly-CSharp
-        m_MethodName: AddDamage
+        m_MethodName: AddResistanceDamage
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -260,6 +260,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fa797eafa8c6b2469410505e27230d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _Value: -5
+  _Value: -40
   _Time: 0
-  TargetTags: []
+  TargetTags:
+  - Enemy

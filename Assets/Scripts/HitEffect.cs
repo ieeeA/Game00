@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class HitEffect : PoolInitializedBehavior
 {
@@ -9,6 +10,9 @@ public class HitEffect : PoolInitializedBehavior
     private float _timer = 0.0f;
 
     private ParticleSystem _Particle;
+
+    [SerializeField]
+    private UnityEvent _OnInit;
 
     public override void OnAllocated()
     {
@@ -24,6 +28,7 @@ public class HitEffect : PoolInitializedBehavior
     public override void OnPostInstantiated()
     {
         _Particle.Play();
+        _OnInit?.Invoke();
     }
 
     // Update is called once per frame

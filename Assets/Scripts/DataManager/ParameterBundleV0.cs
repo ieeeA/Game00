@@ -7,6 +7,7 @@ using System;
 public enum ParameterType
 {
     MaxHP, // Å‘åHP
+    MaxResistance, // Å‘åResistance
     AutoRegenerate, // ©“®‰ñ•œ—Ê(1sec)
     MineHervestRate, // zÎ‰ñûŒø—¦
 
@@ -119,6 +120,8 @@ public class ParameterBundleV0 : MonoBehaviour
             case ParameterType.MoveOwnerScale:
                 return 100;
             case ParameterType.MaxHP:
+                return 100;
+            case ParameterType.MaxResistance:
                 return 100;
             default:
                 return 0;

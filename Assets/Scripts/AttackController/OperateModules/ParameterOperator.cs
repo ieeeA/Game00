@@ -69,6 +69,7 @@ public class ParameterOperator : MonoBehaviour
             status.ChangeHP(new HPChangeInfo()
             {
                 ModifyValue = (int)_Value,
+                // TODO: これだとだめ、本当はActionを発動させてこのオブジェクトを生成させたやつを登録しないとけない
                 Sender = gameObject
             });
             Debug.Log("[ParameterOperator] damage!");
@@ -83,6 +84,7 @@ public class ParameterOperator : MonoBehaviour
             status.ChangeResistance(new ResistanceChangeInfo()
             {
                 ModifyValue = (int)_Value,
+                // TODO: これもだめ、本当はActionを発動させてこのオブジェクトを生成させたやつを登録しないとけない
                 Sender = gameObject
             });
             Debug.Log("[ParameterOperator] resistance damage!");
