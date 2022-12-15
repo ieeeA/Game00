@@ -1,6 +1,18 @@
+using Microsoft.Build.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+
+// タグを
+public enum TimerEffectType
+{
+    None = 0x00,
+    Permanent = 0x01,
+    EasyCancelableAction = 0x02,
+    HardCancelableAction = 0x04,
+    CancelableParameterEffect = 0x08,
+}
 
 /// <summary>
 /// ゲームオブジェクトに紐づく時間発動系の処理を管理
@@ -30,8 +42,8 @@ public class TimerEffectManager : MonoBehaviour
     public void Apply(TimerEffect effect)
     {
         Debug.Log($"[TimerEffectManager]{effect.Stringify()}");
-        var appliedEff = SearchEffect(effect._Id);
-        if (appliedEff != null && effect._IsDistinct)
+        var appliedEff = SearchEffect(effect.Id);
+        if (appliedEff != null && effect.IsDistinct)
         {
             return;
         }
@@ -43,58 +55,100 @@ public class TimerEffectManager : MonoBehaviour
         else
         {
             _Effects.Add(effect);
-            effect.OnStart(gameObject);
+            effect.Start(gameObject, this);
         }
+    }
+
+    public void Remove(TimerEffect effect)
+    {
+        effect.Cancel(gameObject);
+        _Effects.Remove(effect);
     }
 
     public TimerEffect SearchEffect(string id)
     {
-        return _Effects.Find(x => x._Id == id);
+        return _Effects.Find(x => x.Id == id);
+    }
+
+    public IEnumerable<TimerEffect> SearchEffect(TimerEffectType typeBitArray)
+    {
+        // yield でやるとforeachしながらRemoveを呼ばれて、Collection was Changedを起こす可能性があるので
+        // リストを作っておく
+        return _Effects.Where(x => (typeBitArray & x.EffectType) != 0).ToList();
     }
 }
 
 public class TimerEffect
 {
-    public enum ApplyMode
+    public enum TimerEffectApplyMode
     {
         Additive, // 加算
         Overwrite, // 上書き
     }
-    public string _Id = ""; // 重複登録回避用のID
-    public bool _IsDistinct = true; // 重複登録を許すかどうか
-    public ApplyMode _ApplyMode = ApplyMode.Overwrite; // 追加付与モード
-    public bool _IsIterative; // Intervalによる繰り返し効果を許容するか
-    public System.Action<GameObject, GameObject, object> _OnStart; // 効果先オブジェクト、効果元オブジェクト（任意, owner）, Action間で情報をやり取りするためのもの
-    public System.Action<GameObject, GameObject, object> _OnInterval;
-    public System.Action<GameObject, GameObject, object> _OnEnd;
-    public float _Interval;
 
-    public GameObject _Owner;
-    public object _Context;
+    public string Id { get; init; } // 重複登録回避用のID
+    public bool IsDistinct { get; init; } = true; // 重複登録を許すかどうか
+    public TimerEffectApplyMode ApplyMode { get; init; } = TimerEffectApplyMode.Overwrite; // 追加付与モード
+    public bool IsIterative { get; init; } = false; // Intervalによる繰り返し効果を許容するか
+    public TimerEffectType EffectType { get; init; } = TimerEffectType.Permanent;
 
-    public float _LifeTimer;
+    /// <summary>
+    /// 引数構成: 効果先オブジェクト、効果元オブジェクト（任意, owner）, Action間で情報をやり取りするためのもの
+    /// </summary>
+    public System.Action<GameObject, GameObject, object> OnStart { get; init; }
+    /// <summary>
+    /// 引数構成: 効果先オブジェクト、効果元オブジェクト（任意, owner）, Action間で情報をやり取りするためのもの
+    /// </summary>
+    public System.Action<GameObject, GameObject, object> OnInterval { get; init; }
+    /// <summary>
+    /// 引数構成: 効果先オブジェクト、効果元オブジェクト（任意, owner）, Action間で情報をやり取りするためのもの
+    /// </summary>
+    public System.Action<GameObject, GameObject, object> OnCancel { get; init; } // キャンセルされたときに呼ばれる
+    /// <summary>
+    /// 引数構成: 効果先オブジェクト、効果元オブジェクト（任意, owner）, Action間で情報をやり取りするためのもの
+    /// </summary>
+    public System.Action<GameObject, GameObject, object> OnEnd { get; init; }
 
-    private float _Timer;
-
+    public float Interval { get; init; }
+    public GameObject Owner { get; init; }
+    public object Context { get; init; }
+    public float LifeTime { get; init; }
     public bool IsEnd => _LifeTimer < 0;
+
+    private bool _IsCanceled;
+    private float _Timer;
+    private float _LifeTimer;
+    private TimerEffectManager _Manager;
 
     public TimerEffect(string id)
     {
-        _Id = id;
+        Id = id;
+        _IsCanceled = false;
+    }
+    public void Start(GameObject subject, TimerEffectManager manager)
+    {
+        _LifeTimer = LifeTime;
+        OnStart?.Invoke(subject, Owner, Context);
+        _Manager = manager;
     }
 
-    public void OnStart(GameObject subject)
+    public void IntervalAction(GameObject subject)
     {
-        _OnStart?.Invoke(subject, _Owner, _Context);
+        OnInterval?.Invoke(subject, Owner, Context);
+    }
+    
+    public void End(GameObject subject)
+    {
+        if (_IsCanceled == false)
+        {
+            OnEnd?.Invoke(subject, Owner, Context);
+        }
     }
 
-    public void OnInterval(GameObject subject)
+    public void Cancel(GameObject subject)
     {
-        _OnInterval?.Invoke(subject, _Owner, _Context);
-    }
-    public void OnEnd(GameObject subject)
-    {
-        _OnEnd?.Invoke(subject, _Owner, _Context);
+        OnCancel?.Invoke(subject, Owner, Context);
+        _IsCanceled = true;
     }
 
     public void Update(GameObject subject)
@@ -102,26 +156,26 @@ public class TimerEffect
         _LifeTimer -= Time.deltaTime;
         if (IsEnd)
         {
-            OnEnd(subject);
+            End(subject);
         }
-        if (_IsIterative) {
+        if (IsIterative) {
             _Timer -= Time.deltaTime;
             if (_Timer < 0)
             {
-                OnInterval(subject);
-                _Timer = _Interval;
+                IntervalAction(subject);
+                _Timer = Interval;
             }
         }
     }
 
     public void OverlapApply(TimerEffect eff)
     {
-        switch (eff._ApplyMode)
+        switch (eff.ApplyMode)
         {
-            case ApplyMode.Additive:
+            case TimerEffectApplyMode.Additive:
                 _LifeTimer += eff._LifeTimer;
                 break;
-            case ApplyMode.Overwrite:
+            case TimerEffectApplyMode.Overwrite:
                 _LifeTimer = eff._LifeTimer;
                 break;
             default:
@@ -131,6 +185,6 @@ public class TimerEffect
 
     public string Stringify()
     {
-        return $"[{_Id}] Distinct::{_IsDistinct} ApplyMode::{_ApplyMode} Iterative::{_IsIterative} Interval::{_Interval} Lifetime::{_LifeTimer}";
+        return $"[{Id}] Distinct::{IsDistinct} ApplyMode::{ApplyMode} Iterative::{IsIterative} Interval::{Interval} Lifetime::{_LifeTimer}";
     }
 }

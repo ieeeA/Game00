@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 //public class PlayerControllerVer0 : MonoBehaviour, IProjectileHit
-public class PlayerControllerVer0 : MonoBehaviour
+public class PlayerControllerVer0 : MonoBehaviour, IFireModuleUser
 {
     public static PlayerControllerVer0 Current { get; private set; }
 
@@ -84,6 +84,11 @@ public class PlayerControllerVer0 : MonoBehaviour
             vert = Input.GetAxisRaw("Vertical");
         }
         return _camera.FrontXZ * vert + _camera.RightXZ * hori;
+    }
+
+    public Vector3 GetFocusVector()
+    {
+        return CameraController.PlayerCameraCurrent.transform.forward;
     }
 
     //public void Hit(object bullet, ProjectileHitInfo hitInfo)

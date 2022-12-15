@@ -29,7 +29,7 @@ public class ParameterOperator : MonoBehaviour
             if (tem != null)
             {
                 // OwnerScale‚ð0‚É‚·‚é
-                var modifier = new ParameterModifier(ParameterType.MoveOwnerScale, -1.0f);
+                var modifier = new ParameterModifier(ParameterType.MoveOwnerScale, _Value);
                 tem.ApplyParameterModifier(
                     _Time,
                     modifier,

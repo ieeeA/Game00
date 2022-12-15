@@ -19,14 +19,15 @@ public class PointCanon : FireTypeModule
         // _NoFixed がついてる時は途中で攻撃を受けたらCancelされるようにしておく
         var eff = new TimerEffect("ChargeAndFire_NoFixed")
         {
-            _ApplyMode = TimerEffect.ApplyMode.Overwrite,
-            _IsDistinct = true,
-            _LifeTimer = _CurrentState._ChargeTime,
-            _IsIterative = true,
-            _Interval = _CurrentState._ChargeEffInterval,
-            _Owner = owner,
-            _OnStart = null, // startはここでやるのでいらない
-            _OnInterval = (owner, target, c) =>
+            ApplyMode = TimerEffect.TimerEffectApplyMode.Overwrite,
+            EffectType = TimerEffectType.EasyCancelableAction,
+            IsDistinct = true,
+            LifeTime = _CurrentState._ChargeTime,
+            IsIterative = true,
+            Interval = _CurrentState._ChargeEffInterval,
+            Owner = owner,
+            OnStart = null, // startはここでやるのでいらない
+            OnInterval = (owner, target, c) =>
             {
                 // チャージエフェクトを出す
                 Debug.Log("Charging!");
@@ -38,7 +39,7 @@ public class PointCanon : FireTypeModule
                 t.Normalize();
                 eff.transform.LookAt(t + eff.transform.position);
             },
-            _OnEnd = (owner, target, c) =>
+            OnEnd = (owner, target, c) =>
             {
                 // TODO: 発射処理
                 OnFired(owner);

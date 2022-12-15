@@ -94,6 +94,7 @@ public class FireControllerV2 : MonoBehaviour
 
         if (_IsPlayer)
         {
+            // これ一応デバッグ用だから許して
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 _Current = 0;

@@ -3,79 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class BlowModule : FireTypeModule
+public class BlowModule : FireModuleImplBaseV0
 {
     public override FireModuleType Type => FireModuleType.Blow;
 
-    // TODO:
-    // そのうちNPCとPlayer両用にするので、なんかのInterfaceに_lockerを変える
-    private PlayerSystem _locker;
-    private Vector3 _PrevCameraForward;
-
-    public override void OnFire(GameObject owner)
+    protected override void ConfigureProjectile(GameObject owner, PoolInitializedBehavior pooledObj)
     {
-        var mgr = owner.GetComponent<TimerEffectManager>();
-
-        // TODO
-        // _NoFixed がついてる時は途中で攻撃を受けたらCancelされるようにしておく
-        var eff = new TimerEffect("ChargeAndFire_NoFixed") 
+        if (pooledObj is BasicPooledBehavior proj)
         {
-            _ApplyMode = TimerEffect.ApplyMode.Overwrite,
-            _IsDistinct = true,
-            _LifeTimer = _CurrentState._ChargeTime,
-            _IsIterative = true,
-            _Interval = _CurrentState._ChargeEffInterval,
-            _Owner = owner,
-            _OnStart = null, // startはここでやるのでいらない
-            _OnInterval = (owner, target, c) =>
-            {
-                // チャージエフェクトを出す
-                Debug.Log("Charging!");
-                var eff = VFXManager.Current.Instantiate(_CurrentState._ChargeEffId);
-                eff.transform.position = owner.transform.position;
-
-                var t = _PrevCameraForward = CameraController.PlayerCameraCurrent.transform.forward;
-                t.y = 0;
-                t.Normalize();
-                eff.transform.LookAt(t + eff.transform.position);
-            },
-            _OnEnd = (owner, target, c) =>
-            {
-                // TODO: 発射処理
-                OnFired(owner);
-            },
-        };
-        Debug.Log("StartCharge...");
-
-        mgr.Apply(eff);
-
-        // TODO: 移動をロックする
-        _locker = owner.GetComponent<PlayerSystem>();
-        if (_locker != null)
-        {
-            _locker.IsMoveLockedSelf = true;
-        }
-    }
-
-    // 発射中も動けないので
-    protected void OnFired(GameObject owner)
-    {
-        Debug.Log("Shoot!!!");
-        var blow = ProjectileManager.Current.Instantiate<BasicPooledBehavior>(_CurrentState._ProjectileId);
-        blow.transform.position = owner.transform.position;
-        blow.transform.rotation = owner.transform.rotation;
-
-        var t = _PrevCameraForward;
-        t.y = 0;
-        t.Normalize();
-        blow.transform.LookAt(t + blow.transform.position);
-
-        // TODO
-        // 効果時間分移動をロックする。その後解除する。
-        _locker = owner.GetComponent<PlayerSystem>();
-        if (_locker != null)
-        {
-            _locker.IsMoveLockedSelf = false;
+            proj.transform.position = owner.transform.position;
+            proj.transform.rotation = owner.transform.rotation;
+            var t = _PrevCameraForward;
+            t.y = 0;
+            t.Normalize();
+            proj.transform.LookAt(t + proj.transform.position);
         }
     }
 }

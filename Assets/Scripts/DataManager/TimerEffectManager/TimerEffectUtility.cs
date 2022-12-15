@@ -19,22 +19,28 @@ public static class TimerEffectUtility
 
         var eff = new TimerEffect(id)
         {
-            _ApplyMode = TimerEffect.ApplyMode.Overwrite,
-            _IsDistinct = isDestinct,
-            _LifeTimer = timer,
-            _Owner = tem.gameObject,
-            _OnStart = (owner, target, c) =>
+            ApplyMode = TimerEffect.TimerEffectApplyMode.Overwrite,
+            EffectType = TimerEffectType.CancelableParameterEffect,
+            IsDistinct = isDestinct,
+            LifeTime = timer,
+            Owner = tem.gameObject,
+            OnStart = (owner, target, c) =>
             {
                 param.Register(mod);
+                Debug.Log($"[ParameterOperator] EffectStart: {id}");
             },
-            _Context = null,
-            _OnEnd = (owner, target, c) =>
+            Context = null,
+            OnCancel = (owner, target, c) =>
+            {
+                param.UnRegister(mod);
+                Debug.Log($"[ParameterOperator] EffectStop(Canceled): {id}");
+            },
+            OnEnd = (owner, target, c) =>
             {
                 param.UnRegister(mod);
                 Debug.Log($"[ParameterOperator] EffectStop: {id}");
             }
         };
-        Debug.Log($"[ParameterOperator] EffectStart: {id}");
         tem.Apply(eff);
     }
 
@@ -53,23 +59,29 @@ public static class TimerEffectUtility
 
         var eff = new TimerEffect(id)
         {
-            _ApplyMode = TimerEffect.ApplyMode.Overwrite,
-            _IsDistinct = isDestinct,
-            _LifeTimer = timer,
-            _Owner = tem.gameObject,
-            _OnStart = (owner, target, c) =>
+            ApplyMode = TimerEffect.TimerEffectApplyMode.Overwrite,
+            EffectType = TimerEffectType.CancelableParameterEffect,
+            IsDistinct = isDestinct,
+            LifeTime = timer,
+            Owner = tem.gameObject,
+            OnStart = (owner, target, c) =>
             {
                 param.Register(mod);
+                Debug.Log($"[ParameterOperator] EffectStart: {id}");
             },
-            _Context = null,
-            _OnEnd = (owner, target, c) =>
+            Context = null,
+            OnCancel = (owner, target, c) =>
+            {
+                param.UnRegister(mod);
+                Debug.Log($"[ParameterOperator] EffectStop(Canceled): {id}");
+            },
+            OnEnd = (owner, target, c) =>
             {
                 param.UnRegister(mod);
                 Debug.Log($"[ParameterOperator] EffectStop: {id}");
             }
         };
-        Debug.Log($"[ParameterOperator] EffectStart: {id}");
         tem.Apply(eff);
     }
-
 }
+
