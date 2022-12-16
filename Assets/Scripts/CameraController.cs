@@ -37,19 +37,16 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (PlayerSystem.Current.IsCameraLocked)
+        if (PlayerSystem.Current.IsCameraLocked == false)
         {
             // LockÇ≥ÇÍÇƒÇ»Ç¢èÍçáÇÕëÄçÏÇ™îjí]Ç∑ÇÈÇΩÇﬂ
-            return;
+            var wMouseDelta = -Input.GetAxisRaw("Mouse X");
+            var hMouseDelta = -Input.GetAxisRaw("Mouse Y");
+
+            _horiParam += wMouseDelta * _MouseSensitivity;
+            _vertParam += hMouseDelta * _MouseSensitivity;
+            _vertParam = Mathf.Clamp(_vertParam, -Mathf.PI / 2.1f, Mathf.PI / 2.1f);
         }
-
-        var wMouseDelta = -Input.GetAxisRaw("Mouse X");
-        var hMouseDelta = -Input.GetAxisRaw("Mouse Y");
-
-        _horiParam += wMouseDelta * _MouseSensitivity;
-        _vertParam += hMouseDelta * _MouseSensitivity;
-
-        _vertParam = Mathf.Clamp(_vertParam, -Mathf.PI / 2.1f, Mathf.PI / 2.1f);
 
         var pos = Orbit();
 

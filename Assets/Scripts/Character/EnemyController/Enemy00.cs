@@ -42,7 +42,6 @@ public class Enemy00 : MonoBehaviour, IProjectileHit
 
     private float _VerSpeed = 0.0f;
 
-
     public enum Enemy00State
     {
         Patrol,
