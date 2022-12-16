@@ -23,6 +23,8 @@ public class ModuleState : ScriptableObject
     [SerializeField]
     public string _ProjectileId; // 攻撃オブジェクトを取り出すためのID
     [SerializeField]
+    public float _MoveSpeedDecreaseRatio; // 速度減少率
+    [SerializeField]
     public float _ChargeTime; // 発射までの時間
     [SerializeField]
     public float _ChargeEffInterval; // チャージエフェクトのエミット感覚

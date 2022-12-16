@@ -15,6 +15,5 @@ public class VFXPlayer : MonoBehaviour
     {
         var vfx = VFXManager.Current.Instantiate(_VfxId);
         vfx.transform.position = transform.position;
-        _OnPlay?.Invoke();
     }
 }

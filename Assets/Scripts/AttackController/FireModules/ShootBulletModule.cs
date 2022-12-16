@@ -9,7 +9,7 @@ public class ShootBulletModule : FireModuleImplBaseV0
 
     private Vector3 CalculateDirection()
     {
-        var t = _PrevCameraForward;
+        var t = _User.GetFocusVector();
         t += _CurrentState._Offset0;
         return t.normalized;
     }

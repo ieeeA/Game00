@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6209673786714499528}
   - component: {fileID: 6209673786714499531}
   - component: {fileID: 6209673786714499530}
+  - component: {fileID: 4759493423718377515}
   m_Layer: 9
   m_Name: Projectile01
   m_TagString: Untagged
@@ -114,7 +115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitEffectId: ExplodeEffect
   LifeTime: 5
-  radius: 0.1
+  radius: 1
   hitLayer:
   - Enemy
   - Terrain
@@ -138,7 +139,19 @@ MonoBehaviour:
         m_CallState: 2
   _OnExplodeHit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4759493423718377515}
+        m_TargetAssemblyTypeName: ParameterOperator, Assembly-CSharp
+        m_MethodName: AddResistanceDamage
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   _Tag: Enemy
 --- !u!96 &6209673786714499531
 TrailRenderer:
@@ -261,6 +274,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _Value: -200
+  _Time: 0
+  TargetTags:
+  - Enemy
+--- !u!114 &4759493423718377515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6209673786714499525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fa797eafa8c6b2469410505e27230d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _Value: -90
   _Time: 0
   TargetTags:
   - Enemy

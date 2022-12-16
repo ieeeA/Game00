@@ -27,7 +27,8 @@ public class DataOperator : MonoBehaviour
         if (tem != null)
         {
             // OwnerScale‚ð0‚É‚·‚é
-            var modifier = new ParameterModifier(ParameterType.MoveOwnerScale, -100);
+            Debug.Log("[DataOperator] Knockout");
+            var modifier = new ParameterModifier(ParameterType.MoveHoriSpeedScale, -100);
             tem.ApplyParameterModifier(
                 _KnockoutTime,
                 modifier,

@@ -8,6 +8,12 @@ public interface IStatusOperator
     void SetStatusDamage(int damage, object sender);
 }
 
+public class DataOperationInfo
+{
+    public Collider Collider { get; init; }
+    public GameObject Sender { get; init; }
+}
+
 /// <summary>
 /// Operator‚Í•Ê‚ÌUnityEvent‚Æ‚©‚É‚­‚Á‚Â‚¯‚ÄŒÄ‚Ño‚·‚à‚Ì
 /// AreaEffector‚Æ‚©
@@ -21,11 +27,11 @@ public class ParameterOperator : MonoBehaviour
     [SerializeField]
     public string[] TargetTags;
 
-    public void SetSlowParameter(Collider col)
+    public void SetSlowParameter(DataOperationInfo info)
     {
-        if (TargetTags.Contains(col.tag))
+        if (TargetTags.Contains(info.Collider.tag))
         {
-            var tem = col.GetComponent<TimerEffectManager>();
+            var tem = info.Collider.GetComponent<TimerEffectManager>();
             if (tem != null)
             {
                 // OwnerScale‚ğ0‚É‚·‚é
@@ -38,12 +44,12 @@ public class ParameterOperator : MonoBehaviour
         }
     }
 
-    public void SetExternalForce(Collider col)
+    public void SetExternalForce(DataOperationInfo info)
     {
-        if (TargetTags.Contains(col.tag))
+        if (TargetTags.Contains(info.Collider.tag))
         {
             // ˆêu‚¾‚¯‚ ‚½‚Á‚½‚Æ‚«‚É—Í‚ğ‰Á‚¦‚éTimerEffect‚ğ‚Â‚¯‚éB
-            var tem = col.GetComponent<TimerEffectManager>();
+            var tem = info.Collider.GetComponent<TimerEffectManager>();
             if (tem != null)
             {
                 var force = _Value * transform.forward;
@@ -61,11 +67,11 @@ public class ParameterOperator : MonoBehaviour
         }
     }
 
-    public void AddDamage(Collider col)
+    public void AddDamage(DataOperationInfo info)
     {
-        if (TargetTags.Contains(col.tag))
+        if (TargetTags.Contains(info.Collider.tag))
         {
-            var status = col.GetComponent(typeof(IStatusManager)) as IStatusManager;
+            var status = info.Collider.GetComponent(typeof(IStatusManager)) as IStatusManager;
             status.ChangeHP(new HPChangeInfo()
             {
                 ModifyValue = (int)_Value,
@@ -76,11 +82,11 @@ public class ParameterOperator : MonoBehaviour
         }
     }
 
-    public void AddResistanceDamage(Collider col)
+    public void AddResistanceDamage(DataOperationInfo info)
     {
-        if (TargetTags.Contains(col.tag))
+        if (TargetTags.Contains(info.Collider.tag))
         {
-            var status = col.GetComponent(typeof(IStatusManager)) as IStatusManager;
+            var status = info.Collider.GetComponent(typeof(IStatusManager)) as IStatusManager;
             status.ChangeResistance(new ResistanceChangeInfo()
             {
                 ModifyValue = (int)_Value,

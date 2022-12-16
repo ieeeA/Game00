@@ -17,8 +17,7 @@ public abstract class FireModuleImplBaseV0 : FireTypeModule
     
     protected ParameterBundleV0 _Param;
     private ParameterModifier _MoveLockModifier;
-    protected Vector3 _PrevCameraForward;
-    private IFireModuleUser _User;
+    protected IFireModuleUser _User;
 
     public override void OnFire(GameObject owner)
     {
@@ -58,14 +57,14 @@ public abstract class FireModuleImplBaseV0 : FireTypeModule
         Debug.Log("Charging!");
         var eff = VFXManager.Current.Instantiate(_CurrentState._ChargeEffId);
         eff.transform.position = owner.transform.position;
-        var t = _PrevCameraForward = _User.GetFocusVector();
+        var t = _User.GetFocusVector();
         t.y = 0;
         t.Normalize();
-        eff.transform.LookAt(_PrevCameraForward + eff.transform.position);
+        eff.transform.LookAt(_User.GetFocusVector() + eff.transform.position);
 
         // à⁄ìÆÇÃLockèàóù
         // -10Çì¸ÇÍÇÈÇÃÇÕê‚ëŒìÆÇØÇ»Ç¢ÇÊÇ§Ç…Ç∑ÇÈÇΩÇﬂ
-        _MoveLockModifier = new ParameterModifier(ParameterType.MoveOwnerScale, -100);
+        _MoveLockModifier = new ParameterModifier(ParameterType.MoveHoriSpeedScale, -_CurrentState._MoveSpeedDecreaseRatio);
         _Param.Register(_MoveLockModifier);
     }
 

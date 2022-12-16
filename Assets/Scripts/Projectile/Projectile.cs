@@ -5,13 +5,7 @@ using UnityEngine.Events;
 
 public interface IProjectileHit
 {
-    void Hit(object bullet, ProjectileHitInfo hitInfo);
-}
-
-public class ProjectileHitInfo
-{
-    public GameObject Attacker { get; set; }
-    public int Damage { get; set; }
+    //void Hit(object bullet, ProjectileHitInfo hitInfo);
 }
 
 public class Projectile : PoolInitializedBehavior
@@ -31,9 +25,9 @@ public class Projectile : PoolInitializedBehavior
     [SerializeField]
     public float _EffectRadius = 5.0f;
     [SerializeField]
-    public UnityEvent<Collider> _OnHit;
+    public UnityEvent<DataOperationInfo> _OnHit;
     [SerializeField]
-    public UnityEvent<Collider> _OnExplodeHit;
+    public UnityEvent<DataOperationInfo> _OnExplodeHit;
     [SerializeField]
     public string _Tag;
 
@@ -43,6 +37,8 @@ public class Projectile : PoolInitializedBehavior
     private Vector3 _prevPos;
 
     private bool _IsConfigured = false;
+
+    public GameObject Sender { get; set; }
 
     public void Configure(float speed, Vector3 dir)
     {
@@ -62,13 +58,14 @@ public class Projectile : PoolInitializedBehavior
     private void OnHit(RaycastHit hit)
     {
         Debug.Log("[Bullet] Hit!");
-        _OnHit?.Invoke(hit.collider);
+        var t = new DataOperationInfo() { Collider = hit.collider, Sender = Sender };
+        _OnHit?.Invoke(t);
         var eff = VFXManager.Current.Instantiate(hitEffectId);
         eff.transform.position = hit.point;
         
         foreach (var collider in FieldUtil.SearchCollider(hit.point, _EffectRadius, _Tag))
         {
-            _OnExplodeHit?.Invoke(collider);    
+            _OnExplodeHit?.Invoke(t);    
         }
 
         Release();

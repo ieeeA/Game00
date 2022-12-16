@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 1618844621403035068}
   - component: {fileID: 1618844621403035069}
   - component: {fileID: 4722910016464857017}
-  - component: {fileID: 4722910016464857016}
   - component: {fileID: -5005206285213502798}
   m_Layer: 0
   m_Name: BlowSample
@@ -100,18 +99,6 @@ MonoBehaviour:
   OnHit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4722910016464857016}
-        m_TargetAssemblyTypeName: SampleEffectToCollider, Assembly-CSharp
-        m_MethodName: Effect
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: -5005206285213502798}
         m_TargetAssemblyTypeName: ParameterOperator, Assembly-CSharp
         m_MethodName: AddDamage
@@ -4939,18 +4926,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 3
---- !u!114 &4722910016464857016
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1618844621403035070}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8273e58ccc828f247b491eb2dfb901be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-5005206285213502798
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4963,7 +4938,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fa797eafa8c6b2469410505e27230d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _Value: -2
+  _Value: -30
   _Time: 0
   TargetTags:
   - Enemy

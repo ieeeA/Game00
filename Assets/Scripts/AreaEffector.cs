@@ -14,7 +14,7 @@ public class AreaEffector : MonoBehaviour
     [SerializeField]
     public bool _Once;
     [SerializeField]
-    public UnityEvent<Collider> OnHit;
+    public UnityEvent<DataOperationInfo> OnHit;
     [SerializeField]
     public UnityEvent OnEffect;
     [SerializeField]
@@ -34,6 +34,8 @@ public class AreaEffector : MonoBehaviour
     private bool isEffected = false;
     public float Timer { get; protected set; }
     public float LifeTimer { get; protected set; }
+
+    public GameObject Sender { get; set; }
 
     public void OnDrawGizmos()
     {
@@ -75,7 +77,7 @@ public class AreaEffector : MonoBehaviour
             isEffected = true;
             foreach (var col in FieldUtil.SearchCollider(transform.position, _Range))
             {
-                OnHit?.Invoke(col);
+                OnHit?.Invoke(new DataOperationInfo() { Sender = Sender, Collider = col }); ;
             }
             OnEffect?.Invoke();
         }

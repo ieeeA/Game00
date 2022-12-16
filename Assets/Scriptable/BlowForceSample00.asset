@@ -16,6 +16,7 @@ MonoBehaviour:
   _Interval: 1
   _Type: 3
   _ProjectileId: PBlowForceSample00
+  _MoveSpeedDecreaseRatio: 0.4
   _ChargeTime: 0.5
   _ChargeEffInterval: 0.5
   _ChargeEffId: ChargeEffect

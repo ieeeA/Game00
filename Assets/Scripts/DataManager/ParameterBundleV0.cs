@@ -16,6 +16,7 @@ public enum ParameterType
     CastSpeed, // スペル発動スピード
     CoolDownRecovery, // クールダウン回復
 
+    MoveHoriSpeedScale, // 自分の意志で動けることができる最大速度スケール
     MoveOwnerScale, // 移動力スケール（移動速度低下とかに使う）
     // TODO: このParameter処理系絶対FloatIntVectorかまとめて扱えるようにBitValueみたい構造体を用意した方がいい
     MoveExternalForceX, // 外力X
@@ -122,6 +123,8 @@ public class ParameterBundleV0 : MonoBehaviour
             case ParameterType.MaxHP:
                 return 100;
             case ParameterType.MaxResistance:
+                return 100;
+            case ParameterType.MoveHoriSpeedScale:
                 return 100;
             default:
                 return 0;

@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d56f34e16d4e6b4c83c2f78e91fe0e9, type: 3}
   m_Name: Projectile01ShootBullet
   m_EditorClassIdentifier: 
-  _Time: -0.0010643112
+  _Time: -0.0012960024
   _Interval: 1
   _Type: 3
   _ProjectileId: PProjectile01
+  _MoveSpeedDecreaseRatio: 0.7
   _ChargeTime: 0.5
   _ChargeEffInterval: 0.5
   _ChargeEffId: ChargeEffect

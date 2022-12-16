@@ -336,9 +336,4 @@ public class Enemy00 : MonoBehaviour, IProjectileHit
                 break;
         }
     }
-
-    public void Hit(object bullet, ProjectileHitInfo hitInfo)
-    {
-
-    }
 }

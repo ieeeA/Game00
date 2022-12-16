@@ -12,12 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d56f34e16d4e6b4c83c2f78e91fe0e9, type: 3}
   m_Name: SampleSlowGround
   m_EditorClassIdentifier: 
+  _Time: -0.0017689434
   _Interval: 5
   _Type: 1
   _ProjectileId: PSlowGround
+  _MoveSpeedDecreaseRatio: 0.9
   _ChargeTime: 0.2
   _ChargeEffInterval: 0.3
   _ChargeEffId: ChargeEffect
   _LayerNameList0: []
   _Offset0: {x: 0, y: 0, z: 2}
   _Range0: 3
+  _Speed0: 0

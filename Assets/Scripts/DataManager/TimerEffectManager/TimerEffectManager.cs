@@ -42,6 +42,7 @@ public class TimerEffectManager : MonoBehaviour
     public void Apply(TimerEffect effect)
     {
         Debug.Log($"[TimerEffectManager]{effect.Stringify()}");
+        effect.Init(this);
         var appliedEff = SearchEffect(effect.Id);
         if (appliedEff != null && effect.IsDistinct)
         {
@@ -125,11 +126,16 @@ public class TimerEffect
         Id = id;
         _IsCanceled = false;
     }
-    public void Start(GameObject subject, TimerEffectManager manager)
+
+    public void Init(TimerEffectManager manager)
     {
         _LifeTimer = LifeTime;
-        OnStart?.Invoke(subject, Owner, Context);
         _Manager = manager;
+    }
+
+    public void Start(GameObject subject, TimerEffectManager manager)
+    {
+        OnStart?.Invoke(subject, Owner, Context);
     }
 
     public void IntervalAction(GameObject subject)
@@ -154,6 +160,7 @@ public class TimerEffect
     public void Update(GameObject subject)
     {
         _LifeTimer -= Time.deltaTime;
+        //Debug.Log(Stringify());
         if (IsEnd)
         {
             End(subject);
@@ -185,6 +192,6 @@ public class TimerEffect
 
     public string Stringify()
     {
-        return $"[{Id}] Distinct::{IsDistinct} ApplyMode::{ApplyMode} Iterative::{IsIterative} Interval::{Interval} Lifetime::{_LifeTimer}";
+        return $"[{Id}] Distinct::{IsDistinct} ApplyMode::{ApplyMode} Iterative::{IsIterative} Interval::{Interval} Lifetime::{LifeTime} LifeTimer::{_LifeTimer}";
     }
 }

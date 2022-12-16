@@ -5,7 +5,7 @@ using UnityEngine;
 // 多数のTimerEffectManagerからOwnerScaleにアクセスされるとハマったりするので
 // OwnerScale/ExternalForceをParameterBundle依存にする
 
-[RequireComponent(typeof(ParameterBundleV0))] 
+[RequireComponent(typeof(ParameterBundleV0))]
 // 基礎的な方向制御を行うスクリプト
 public class BasicMovement : MonoBehaviour
 {
@@ -53,6 +53,7 @@ public class BasicMovement : MonoBehaviour
             return t;
         }
     }
+    public float MaxHoriSpeedScale => _ParameterBundle.GetParamterFloatOrZero(ParameterType.MoveHoriSpeedScale);
 
     private ParameterBundleV0 _ParameterBundle;
 
@@ -68,7 +69,7 @@ public class BasicMovement : MonoBehaviour
     {
         if (_CharaCon.isGrounded)
         {
-            Debug.Log("Jump");
+            Debug.Log("[BasicMovement] Jump");
             VerSpeed = _JumpSpeed;
         }
     }
@@ -111,7 +112,7 @@ public class BasicMovement : MonoBehaviour
         // 移動方向ベクトル
         var _horiNormDir = HoriSpeed.normalized;
         var _horiNorm = HoriSpeed.magnitude;
-        _horiNorm = Mathf.Clamp(_horiNorm - _HoriFrict * Time.deltaTime, 0, _MaxHoriSpeed);
+        _horiNorm = Mathf.Clamp(_horiNorm - _HoriFrict * Time.deltaTime, 0, _MaxHoriSpeed * MaxHoriSpeedScale);
         HoriSpeed = _horiNormDir * _horiNorm;
 
         if (!_CharaCon.isGrounded)

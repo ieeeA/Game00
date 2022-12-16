@@ -13,7 +13,9 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private float _MouseSensitivity = 0.1f;
     [SerializeField]
-    private float _YOffset = 2.0f;
+    public Vector3 _PosOffset = new Vector3(1.0f, 2.0f, 0.0f);
+    [SerializeField]
+    private float _ZOffset = 2.0f;
 
     private float _horiParam;
     private float _vertParam;
@@ -52,8 +54,8 @@ public class CameraController : MonoBehaviour
         var pos = Orbit();
 
         transform.position = pos * _Distance + targetObject.transform.position;
-        transform.LookAt(targetObject.transform);
-        transform.position += _YOffset * Vector3.up;
+        transform.LookAt(targetObject.transform.position + transform.forward * _ZOffset);
+        transform.position += transform.rotation * _PosOffset;
     }
 
     private Vector3 Orbit()
