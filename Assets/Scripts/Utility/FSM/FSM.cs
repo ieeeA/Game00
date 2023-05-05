@@ -16,6 +16,11 @@ namespace FSM
             this.context = context;
         }
 
+        public FSM()
+        {
+            this.context = null;
+        }
+
         public void Start()
         {
             currentState.Enter(context);
@@ -83,7 +88,7 @@ namespace FSM
             this.Name = name;
         }
 
-        public void AddTranstion(FSMTransition<TContext> transition)
+        public void AddTransition(FSMTransition<TContext> transition)
         {
             transitions.Add(transition);
         }
