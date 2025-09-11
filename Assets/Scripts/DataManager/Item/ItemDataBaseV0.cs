@@ -25,14 +25,14 @@ public class ItemDataBaseV0 : ScriptableObject
         if (option == "Throw")
         {
             int idx = (int)arg;
-            var itemMgr = user.GetComponent<ItemManager>();
-            if (itemMgr.Containers.Count <= idx)
+            var itemMgr = user.GetComponent<PlayerControllerVer0>();
+            if (itemMgr.Inventory.Containers.Count <= idx)
             {
                 Debug.Log("[ItemDataBaseV0] ŽÌ‚Ä‚æ‚¤‚Æ‚µ‚Ä‚¢‚éitemIdx‚ª•s³‚Å‚·");
                 return;
             }
-            var con = itemMgr.Containers[idx];
-            itemMgr.TryRemoveItem(idx, con.Count);
+            var con = itemMgr.Inventory.Containers[idx];
+            itemMgr.Inventory.TryRemoveItem(idx, con.Count);
         }
     }
 }

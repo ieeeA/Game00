@@ -1,48 +1,37 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 
 //public class PlayerControllerVer0 : MonoBehaviour, IProjectileHit
-public class PlayerControllerVer0 : MonoBehaviour, IFireModuleUser
+public class PlayerControllerVer0 : MonoBehaviour
 {
     public static PlayerControllerVer0 Current { get; private set; }
 
     [SerializeField]
+    private GameObject _Prefab;
+
+    [SerializeField]
     private CameraController _camera;
 
-    // 一時的にSerialized
+    // コンポーネントキャッシュ
+    private BasicMovement _basicMove; // 多分BasicMovementもClass化してもいいかも（エントリポイントあんまり増やしたくない）
 
-    //[SerializeField]
-    //private int MaxHP = 100;
+    // プレイヤ構成用クラスたち
+    private Inventory _inventry;
 
-    //private CharacterController _charaCon;
-    private FireControllerV2 _fireConV2;
-    private BasicMovement _basicMove; // 敵の移動ロジックとプレイヤーの移動ロジックをある程度統一
-    private ItemInventoryController _inventory;
+    public Inventory Inventory => _inventry;
 
-    //private int _HP;
-    //private int HP
-    //{
-    //    get => _HP;
-    //    set
-    //    {
-    //        _HP = value;
-    //    }
-    //}
-
-    //private TextHandle _DebugTextHandle;
-
-    // Start is called before the first frame update
     void Start()
     {
-        //_charaCon = GetComponent<CharacterController>();
-        _fireConV2 = GetComponent<FireControllerV2>();
         _basicMove = GetComponent<BasicMovement>();
-        _inventory = GetComponent<ItemInventoryController>();
-
-        //_DebugTextHandle = StandardTextPlane.Current.CreateTextHandle(-1); // 最優先"
-        //HP = MaxHP;
+        _inventry = new Inventory();
     }
 
     private void Awake()
@@ -62,16 +51,32 @@ public class PlayerControllerVer0 : MonoBehaviour, IFireModuleUser
 
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            _inventory.OpenInventory();
+            // トグルする
+            if (PlayerGUIManager.Current.ListSelecter.isActiveAndEnabled)
+            {
+                CloseInventory();
+            }
+            else
+            {
+                OpenInventry();
+            }
         }
 
         if (Input.GetMouseButtonDown(0) && PlayerSystem.Current.IsLocked == false)
         {
-            //_fireCon.Fire(transform.position, _camera.transform.forward);
-            var f = CameraController.PlayerCameraCurrent.transform.forward;
-            f.y = 0.0f;
-            transform.LookAt(transform.position + f.normalized);
-            _fireConV2.Fire();
+            var camTrans = CameraController.PlayerCameraCurrent.transform;
+            var f = camTrans.forward;
+            var lookf = f;
+            lookf.y = 0.0f;
+            transform.LookAt(transform.position + lookf.normalized);
+            
+            Debug.DrawRay(camTrans.position, f * 100.0f, Color.red, 100.0f);
+            if (Physics.Raycast(camTrans.position, f, out RaycastHit hitInfo, 100.0f))
+            {
+                var v = hitInfo.point;
+                EventDebugger.Current.AppendEventDebug($"[Rayhit]{v.ToString()})");
+                var newObj = GameObject.Instantiate(_Prefab, v, Quaternion.identity);
+            }
         }
     }
 
@@ -91,21 +96,66 @@ public class PlayerControllerVer0 : MonoBehaviour, IFireModuleUser
         return CameraController.PlayerCameraCurrent.transform.forward;
     }
 
-    //public void Hit(object bullet, ProjectileHitInfo hitInfo)
-    //{
-    //    if (HP < 0)
-    //    {
-    //        return;
-    //    }
+    #region インベントリ系
+    public void OpenInventry()
+    {
+        var optionNames = new string[] { "やめておく" }
+            .Concat(_inventry.Containers.Select(x => x.Data.Name + " x" + x.Count))
+            .ToArray();
 
-    //    Debug.Log("Hit");
-    //    int damage = hitInfo.Damage;
-    //    HP -= damage;
-    //    EventDebugger.Current.AppendEventDebug("Damage..!!", 1.0f);
+        PlayerGUIManager.Current.ListSelecter.Show();
+        PlayerGUIManager.Current.ListSelecter.WindowTitle = "インベントリ";
+        PlayerGUIManager.Current.ListSelecter.SetOptions(
+            optionNames.Length,
+            "",
+            optionNames,
+            (x) =>
+            {
+                if (x == 0)
+                {
+                    CloseInventory();
+                }
+                else
+                {
+                    var targetIndex = x - 1;
+                    AccessInventoryOption(targetIndex, _inventry.Containers[targetIndex]);
+                }
+            });
+    }
 
-    //    if (HP < 0)
-    //    {
-    //        EventDebugger.Current.AppendEventDebug("Dead!!", 100.0f);
-    //    }
-    //}
+    public void AccessInventoryOption(int index, ItemContainer container)
+    {
+        // アイテムの効果オプションを選択する
+        var itemData = container.Data._ItemData;
+        var options = itemData.GetOptions(gameObject);
+        options.Add("Cancel");
+
+        PlayerGUIManager.Current.Dialog.Show();
+        PlayerGUIManager.Current.Dialog.WindowTitle = itemData._Name;
+        PlayerGUIManager.Current.Dialog.SetOptions(
+                options.Count,
+                $"{itemData._Name} について操作を選択してください",
+                options.ToArray(),
+                (x) =>
+                {
+                    if (x == options.Count - 1)
+                    {
+                        OpenInventry();
+                    }
+                    else
+                    {
+                        // アイテムの効果を発動
+                        Debug.Log($"[ItemInventoryController] {itemData._Name}: {options[x]} ({index})");
+                        itemData.Execute(options[x], gameObject, index);
+                    }
+                }
+            );
+    }
+
+    public void CloseInventory()
+    {
+        PlayerGUIManager.Current.ListSelecter.Close();
+        PlayerGUIManager.Current.Dialog.Close();
+    }
+    #endregion
 }

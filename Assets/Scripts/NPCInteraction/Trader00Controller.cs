@@ -144,7 +144,7 @@ public class Trader00Controller : MonoBehaviour, IInteract
 
     private void ExecuteBuy(BuyOption opt)
     {
-        var itemMgr = _Target.GetComponent<ItemManager>();
+        var itemMgr = _Target.GetComponent<PlayerControllerVer0>().Inventory;
         if (itemMgr != null)
         {
             // çwì¸é¿çsèàóù
@@ -209,7 +209,7 @@ public class Trader00Controller : MonoBehaviour, IInteract
 
     private void ExecuteSale(ItemContainer itemContainer, int count)
     {
-        var itemMgr = _Target.GetComponent<ItemManager>();
+        var itemMgr = _Target.GetComponent<PlayerControllerVer0>().Inventory;
         if (itemMgr != null)
         {
             int index = itemMgr.Containers.IndexOf(itemContainer);
@@ -249,11 +249,10 @@ public class Trader00Controller : MonoBehaviour, IInteract
 
     private List<ItemContainer> GetItemContainers()
     {
-        var itemMgr = _Target.GetComponent<ItemManager>();
+        var itemMgr = _Target.GetComponent<PlayerControllerVer0>().Inventory;
         if (itemMgr != null)
         {
-
-            return _Target?.GetComponent<ItemManager>().Containers;
+            return _Target.GetComponent<PlayerControllerVer0>().Inventory.Containers;
         }
         else
         {

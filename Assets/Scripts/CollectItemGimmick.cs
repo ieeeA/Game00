@@ -19,21 +19,21 @@ public class CollectItemGimmick : MonoBehaviour, IInteract
 
     public void Interact(GameObject target)
     {
-        ItemManager mgr = target.GetComponent<ItemManager>();
-        if (mgr)
+        PlayerControllerVer0 player = target.GetComponent<PlayerControllerVer0>();
+        if (player)
         {
-            Collect(mgr);
+            Collect(player);
         }
     }
 
-    public virtual void Collect(ItemManager mgr)
+    public virtual void Collect(PlayerControllerVer0 player)
     {
         if (_IsCollected)
         {
             return;
         }
 
-        mgr.AddItem(new ItemData(_Item), _Count);
+        player.Inventory.AddItem(new ItemData(_Item), _Count);
         _CollectHead.SetActive(false);
 
         // 後々エフェクトの処理とかをここに

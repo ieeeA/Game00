@@ -25,29 +25,11 @@ public class ItemContainer
     public int Count { get; set; }
 }
 
-public class ItemManager : MonoBehaviour
+public class Inventory
 {
-    private TextHandle _ItemTextHandle;
-    private TextHandle _MoneyTextHandle;
-
     public List<ItemContainer> Containers => _Containers;
-
     private List<ItemContainer> _Containers = new List<ItemContainer>();
     private int _Money = 0;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        _MoneyTextHandle = StandardTextPlane.Current.CreateTextHandle(1);
-        _ItemTextHandle = StandardTextPlane.Current.CreateTextHandle(1);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        _ItemTextHandle.Text = StrigifyContaiers();
-        _MoneyTextHandle.Text = StringifyMoney();
-    }
 
     public void AddMoney(int money)
     {

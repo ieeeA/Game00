@@ -15,10 +15,10 @@ public class DropMoney : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        var mgr = other.GetComponent<ItemManager>();
+        var mgr = other.GetComponent<PlayerControllerVer0>();
         if (mgr != null)
         {
-            mgr.AddMoney(_Count);
+            mgr.Inventory.AddMoney(_Count);
             EventDebugger.Current.AppendEventDebug($"[GetMoney](Count: {_Count})");
             GameObject.Destroy(gameObject);
             return;

@@ -18,10 +18,10 @@ public class DropItem : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        var mgr = other.GetComponent<ItemManager>();
+        var mgr = other.GetComponent<PlayerControllerVer0>();
         if(mgr != null)
         {
-            mgr.AddItem(new ItemData(_Item), Count);
+            mgr.Inventory.AddItem(new ItemData(_Item), Count);
             EventDebugger.Current.AppendEventDebug($"[GetItem]{_Item._Name}({Count})");
             GameObject.Destroy(gameObject);
             return;

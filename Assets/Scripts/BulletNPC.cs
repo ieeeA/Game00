@@ -13,11 +13,11 @@ public class BulletNPC : MonoBehaviour, IInteract
     public void Interact(GameObject target)
     {
         //var fc = target.GetComponent<FireController>();
-        var im = target.GetComponent<ItemManager>();
+        var im = target.GetComponent<PlayerControllerVer0>();
         if (im == null) return;
         //if (fc == null) return;
 
-        if (!im.TryToRemoveMoney(money))
+        if (!im.Inventory.TryToRemoveMoney(money))
         {
             EventDebugger.Current.AppendEventDebug("[Trade]Fail: No money");
             return;
@@ -31,20 +31,7 @@ public class BulletNPC : MonoBehaviour, IInteract
         catch(Exception e)
         {
             EventDebugger.Current.AppendEventDebug("[Trade]Fail: Something wrong");
-            im.AddMoney(money);   
+            im.Inventory.AddMoney(money);   
         }
-
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }
