@@ -237,3 +237,4 @@ MonoBehaviour:
   _SearchRadius: 100
   _Offset: {x: 0, y: 2, z: 0}
   _Duration: 0.1
+  _projectileSpeed: 10
