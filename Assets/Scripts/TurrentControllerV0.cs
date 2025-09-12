@@ -16,6 +16,8 @@ public class TurrentControllerV0 : MonoBehaviour
     private Vector3 _Offset = new Vector3(0, 2.0f, 0);
     [SerializeField]
     private float _Duration;
+    [SerializeField]
+    private float _projectileSpeed;
 
     private float _Timer;
 
@@ -45,7 +47,7 @@ public class TurrentControllerV0 : MonoBehaviour
                 if (obj.GetComponent(typeof(Projectile)) is Projectile proj)
                 {
                     proj.Direction = rel.normalized;
-                    proj.Speed = 500f;
+                    proj.Speed = this._projectileSpeed;
                 }
                 Debug.DrawRay(rayOrigin, col.transform.position - rayOrigin, Color.green, 100.0f);
             }
