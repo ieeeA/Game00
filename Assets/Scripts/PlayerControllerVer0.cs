@@ -1,18 +1,36 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
+using TMPro;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.Toolbars;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEditor.Progress;
 
+public class InteractData
+{
+    public PlayerControllerVer0 Sender { get; }
+
+    public InteractData(PlayerControllerVer0 player)
+    {
+        Sender = player;
+    }
+}
+
+public interface IInteractable
+{
+    void Interact(InteractData data);
+}
 
 //public class PlayerControllerVer0 : MonoBehaviour, IProjectileHit
-public class PlayerControllerVer0 : MonoBehaviour
+public class PlayerControllerVer0 : MonoBehaviour, IInventoryOwner
 {
     public static PlayerControllerVer0 Current { get; private set; }
+
+    [SerializeField]
+    private float _InteractionRange;
 
     [SerializeField]
     private GameObject _Prefab;
@@ -26,12 +44,21 @@ public class PlayerControllerVer0 : MonoBehaviour
     // プレイヤ構成用クラスたち
     private Inventory _inventry;
 
+    private PlayerHUD _hud;
+
     public Inventory Inventory => _inventry;
 
     void Start()
     {
         _basicMove = GetComponent<BasicMovement>();
-        _inventry = new Inventory();
+        _inventry = new Inventory(this);
+        _hud = new PlayerHUD();
+
+        // HPの初期値を入力してね。あとHPが更新されたら代入してね。
+
+        _hud.HP = -1;
+        _hud.ResourceCount = -1;
+        _hud.Money = _inventry.Money;
     }
 
     private void Awake()
@@ -47,6 +74,11 @@ public class PlayerControllerVer0 : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             _basicMove.Jump();
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            ExcecuteInteract();
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -94,6 +126,17 @@ public class PlayerControllerVer0 : MonoBehaviour
     public Vector3 GetFocusVector()
     {
         return CameraController.PlayerCameraCurrent.transform.forward;
+    }
+
+    protected void ExcecuteInteract()
+    {
+        var cols = Physics.OverlapSphere(transform.position, _InteractionRange);
+        foreach (var c in cols) {
+            if (c.GetComponent(typeof(IInteractable)) is IInteractable inter)
+            {
+                inter.Interact(new InteractData(this));
+            }
+        }
     }
 
     #region インベントリ系
@@ -156,6 +199,11 @@ public class PlayerControllerVer0 : MonoBehaviour
     {
         PlayerGUIManager.Current.ListSelecter.Close();
         PlayerGUIManager.Current.Dialog.Close();
+    }
+
+    public void Notify(InventoryEventNotify notify)
+    {
+        _hud.Money = _inventry.Money;
     }
     #endregion
 }

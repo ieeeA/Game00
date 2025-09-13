@@ -2,26 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CollectItemGimmick : MonoBehaviour, IInteract
+public class CollectItemGimmick : MonoBehaviour, IInteractable
 {
     // 採取すると一定時間消える部分
     [SerializeField]
     private GameObject _CollectHead;
     [SerializeField]
     private float _RecoveryInteraval;
-
     [SerializeField]
     private ItemDataBaseV0 _Item;
     [SerializeField]
     private int _Count;
 
     private bool _IsCollected = false;
+    private float _Timer = 0;
 
-    public void Interact(GameObject target)
+    public void Interact(InteractData data)
     {
-        PlayerControllerVer0 player = target.GetComponent<PlayerControllerVer0>();
+        PlayerControllerVer0 player = data.Sender;
         if (player)
         {
+            EventDebugger.Current.AppendEventDebug("CollectItemGimmick!!", 1);
             Collect(player);
         }
     }
@@ -34,29 +35,29 @@ public class CollectItemGimmick : MonoBehaviour, IInteract
         }
 
         player.Inventory.AddItem(new ItemData(_Item), _Count);
-        _CollectHead.SetActive(false);
+
+        SetActiveHead(false);
 
         // 後々エフェクトの処理とかをここに
 
-        StartCoroutine("Recovery"); // 一定時間でリカバリされるコルーチンを呼ぶ
+        _IsCollected = true;
+        StartCoroutine(nameof(Recovery)); // 一定時間でリカバリされるコルーチンを呼ぶ
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void SetActiveHead(bool v)
     {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
+        if (_CollectHead != null)
+        {
+            _CollectHead.SetActive(v);
+        }
     }
 
     private IEnumerator Recovery()
     {
+        EventDebugger.Current.AppendEventDebug("Start GimmickWaitProcess!!!", 1);
         yield return new WaitForSeconds(_RecoveryInteraval);
         _IsCollected = false;
-        _CollectHead.SetActive(true);
+        SetActiveHead(true);
         yield return null;
     }
 }

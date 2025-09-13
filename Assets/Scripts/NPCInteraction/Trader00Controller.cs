@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class Trader00Controller : MonoBehaviour, IInteract
+public class Trader00Controller : MonoBehaviour
 {
     // TODO:
     // ‚Æ‚è‚ ‚¦‚¸”„’l‚ÍŒÅ’è‚µ‚Æ‚­
