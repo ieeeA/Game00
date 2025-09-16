@@ -25,11 +25,19 @@ public class PlayerControllerVer0 : MonoBehaviour
     public static PlayerControllerVer0 Current { get; private set; }
 
     [SerializeField]
+    private GameObject _BulletPrefab;
+
+    [SerializeField]
     private GameObject _Prefab;
 
     [SerializeField]
     private CameraController _camera;
 
+    [SerializeField]
+    private float _projectileSpeed;
+
+    [SerializeField]
+    private Vector3 _Offset = new Vector3(0, 2.0f, 0);
     // コンポーネントキャッシュ
     private BasicMovement _basicMove; // 多分BasicMovementもClass化してもいいかも（エントリポイントあんまり増やしたくない）
 
@@ -43,7 +51,6 @@ public class PlayerControllerVer0 : MonoBehaviour
         _basicMove = GetComponent<BasicMovement>();
         _inventry = new Inventory();
         this.Mode = PlayerActionMode.Building;
-
     }
 
     private void Awake()
@@ -98,22 +105,39 @@ public class PlayerControllerVer0 : MonoBehaviour
 
                 var camTrans = CameraController.PlayerCameraCurrent.transform;
                 var f = camTrans.forward;
-                var lookf = f;
-                lookf.y = 0.0f;
-                transform.LookAt(transform.position + lookf.normalized);
 
-                Debug.DrawRay(camTrans.position, f * 100.0f, Color.red, 100.0f);
-                if (Physics.Raycast(camTrans.position, f, out RaycastHit hitInfo, 100.0f))
+                //var lookf = f;
+                //lookf.y = 0.0f;
+                //transform.LookAt(transform.position + lookf.normalized);
+
+                // 発射元を設定
+                var obj = GameObject.Instantiate(_BulletPrefab);
+                obj.GetComponent<Projectile>().Owner = this.gameObject;
+
+                var rayOrigin = transform.position + _Offset;
+                obj.transform.position = rayOrigin;
+
+                if (obj.GetComponent(typeof(Projectile)) is Projectile proj)
                 {
-                    var v = hitInfo.point;
-                    EventDebugger.Current.AppendEventDebug($"[Rayhit]{v.ToString()})");
-                    var playerStatus = this.gameObject.GetComponent<ParameterBumdleV1>().Status;
-                    if (hitInfo.collider.gameObject.TryGetComponent<ParameterBumdleV1>(out ParameterBumdleV1 parameterBumdle) &&
-                        hitInfo.collider.gameObject.tag == _enemyTag)
-                    {
-                        parameterBumdle.Status.Damaged(playerStatus.AttackPower);
-                    }
+                    proj.Direction = f;
+                    proj.Speed = this._projectileSpeed;
                 }
+
+
+                //Debug.DrawRay(camTrans.position, f * 100.0f, Color.red, 100.0f);
+
+                //if (Physics.Raycast(camTrans.position, f, out RaycastHit hitInfo, 100.0f))
+                //{
+
+                //    var v = hitInfo.point;
+                //    EventDebugger.Current.AppendEventDebug($"[Rayhit]{v.ToString()})");
+                //    var playerStatus = this.gameObject.GetComponent<ParameterBumdleV1>().Status;
+                //    if (hitInfo.collider.gameObject.TryGetComponent<ParameterBumdleV1>(out ParameterBumdleV1 parameterBumdle) &&
+                //        hitInfo.collider.gameObject.tag == _enemyTag)
+                //    {
+                //        parameterBumdle.Status.Damaged(playerStatus.AttackPower);
+                //    }
+                //}
             }
 
 

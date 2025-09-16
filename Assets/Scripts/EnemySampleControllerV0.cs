@@ -9,7 +9,7 @@ public class EnemySampleControllerV0 : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        _basicMove = GetComponent<BasicMovement>();   
+        _basicMove = GetComponent<BasicMovement>();
         _agent = GetComponent<NavMeshAgent>();
     }
 
@@ -23,5 +23,14 @@ public class EnemySampleControllerV0 : MonoBehaviour
             // ‚Î‚©
             _agent.destination = pl.transform.position;
         }
+
+        // ‚Ü‚Ê‚¯
+        float distance = Vector3.Distance(this.transform.position, pl.transform.position);
+        if (distance > 3.0f)
+        {
+
+        }
+
+
     }
 }

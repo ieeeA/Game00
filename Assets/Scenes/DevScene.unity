@@ -2873,6 +2873,18 @@ PrefabInstance:
       propertyPath: _camera
       value: 
       objectReference: {fileID: 1362172348}
+    - target: {fileID: 1053100471461457710, guid: baefd307c8b9b9e489ce9d13dac39c36, type: 3}
+      propertyPath: _Offset.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1053100471461457710, guid: baefd307c8b9b9e489ce9d13dac39c36, type: 3}
+      propertyPath: _BulletPrefab
+      value: 
+      objectReference: {fileID: 14718611383499102, guid: 037b2d565b007444cbe6553a9ba3ea1c, type: 3}
+    - target: {fileID: 1053100471461457710, guid: baefd307c8b9b9e489ce9d13dac39c36, type: 3}
+      propertyPath: _projectileSpeed
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 4886790490531254213, guid: baefd307c8b9b9e489ce9d13dac39c36, type: 3}
       propertyPath: m_LocalPosition.x
       value: 292.17
