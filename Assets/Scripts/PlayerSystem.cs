@@ -8,6 +8,7 @@ using UnityEngine;
 /// </summary>
 public class PlayerSystem : MonoBehaviour
 {
+
     private static PlayerSystem _Current;
     public static PlayerSystem Current => _Current;
 
@@ -17,6 +18,7 @@ public class PlayerSystem : MonoBehaviour
     public bool IsCameraLockedSelf { get; set; }
     public bool IsMoveLockedSelf { get; set; }
 
+
     private void Awake()
     {
         _Current = _Current ?? this;
@@ -25,6 +27,11 @@ public class PlayerSystem : MonoBehaviour
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    void Update()
+    {
+
     }
 
     /// <summary>

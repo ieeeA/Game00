@@ -16,6 +16,13 @@ public class Projectile : MonoBehaviour
 
     public DateTime _InstantiatedTime { get; set; }
 
+    private GameObject _owner { get; set; } // 発射元オブジェクト
+
+    public GameObject Owner
+    {
+        get => _owner;
+        set => _owner = value;
+    }
 
     const string _enemyTag = "Enemy";
 
@@ -45,6 +52,7 @@ public class Projectile : MonoBehaviour
         if (collider.gameObject.tag.Equals(_enemyTag))
         {
             collider.gameObject.GetComponent<ParameterBumdleV1>().Status.Damaged(_damageScore);
+            GameObject.Destroy(this.gameObject);
         }
     }
 }

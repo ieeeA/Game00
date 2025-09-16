@@ -12,7 +12,20 @@ using static UnityEditor.Progress;
 //public class PlayerControllerVer0 : MonoBehaviour, IProjectileHit
 public class PlayerControllerVer0 : MonoBehaviour
 {
+
+    public enum PlayerActionMode
+    {
+        Building,
+        Attack
+    }
+    const string _enemyTag = "Enemy";
+
+    public PlayerActionMode Mode { get; set; }
+
     public static PlayerControllerVer0 Current { get; private set; }
+
+    [SerializeField]
+    private GameObject _BulletPrefab;
 
     [SerializeField]
     private GameObject _Prefab;
@@ -20,6 +33,11 @@ public class PlayerControllerVer0 : MonoBehaviour
     [SerializeField]
     private CameraController _camera;
 
+    [SerializeField]
+    private float _projectileSpeed;
+
+    [SerializeField]
+    private Vector3 _Offset = new Vector3(0, 2.0f, 0);
     // コンポーネントキャッシュ
     private BasicMovement _basicMove; // 多分BasicMovementもClass化してもいいかも（エントリポイントあんまり増やしたくない）
 
@@ -32,6 +50,7 @@ public class PlayerControllerVer0 : MonoBehaviour
     {
         _basicMove = GetComponent<BasicMovement>();
         _inventry = new Inventory();
+        this.Mode = PlayerActionMode.Building;
     }
 
     private void Awake()
@@ -64,20 +83,74 @@ public class PlayerControllerVer0 : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0) && PlayerSystem.Current.IsLocked == false)
         {
-            var camTrans = CameraController.PlayerCameraCurrent.transform;
-            var f = camTrans.forward;
-            var lookf = f;
-            lookf.y = 0.0f;
-            transform.LookAt(transform.position + lookf.normalized);
-            
-            Debug.DrawRay(camTrans.position, f * 100.0f, Color.red, 100.0f);
-            if (Physics.Raycast(camTrans.position, f, out RaycastHit hitInfo, 100.0f))
+            if (Mode == PlayerActionMode.Building)
             {
-                var v = hitInfo.point;
-                EventDebugger.Current.AppendEventDebug($"[Rayhit]{v.ToString()})");
-                var newObj = GameObject.Instantiate(_Prefab, v, Quaternion.identity);
+                var camTrans = CameraController.PlayerCameraCurrent.transform;
+                var f = camTrans.forward;
+                var lookf = f;
+                lookf.y = 0.0f;
+                transform.LookAt(transform.position + lookf.normalized);
+
+                Debug.DrawRay(camTrans.position, f * 100.0f, Color.red, 100.0f);
+                if (Physics.Raycast(camTrans.position, f, out RaycastHit hitInfo, 100.0f))
+                {
+                    var v = hitInfo.point;
+                    EventDebugger.Current.AppendEventDebug($"[Rayhit]{v.ToString()})");
+                    var newObj = GameObject.Instantiate(_Prefab, v, Quaternion.identity);
+                }
             }
+            else if (Mode == PlayerActionMode.Attack)
+            {
+                // 攻撃処置
+
+                var camTrans = CameraController.PlayerCameraCurrent.transform;
+                var f = camTrans.forward;
+
+                //var lookf = f;
+                //lookf.y = 0.0f;
+                //transform.LookAt(transform.position + lookf.normalized);
+
+                // 発射元を設定
+                var obj = GameObject.Instantiate(_BulletPrefab);
+                obj.GetComponent<Projectile>().Owner = this.gameObject;
+
+                var rayOrigin = transform.position + _Offset;
+                obj.transform.position = rayOrigin;
+
+                if (obj.GetComponent(typeof(Projectile)) is Projectile proj)
+                {
+                    proj.Direction = f;
+                    proj.Speed = this._projectileSpeed;
+                }
+
+
+                //Debug.DrawRay(camTrans.position, f * 100.0f, Color.red, 100.0f);
+
+                //if (Physics.Raycast(camTrans.position, f, out RaycastHit hitInfo, 100.0f))
+                //{
+
+                //    var v = hitInfo.point;
+                //    EventDebugger.Current.AppendEventDebug($"[Rayhit]{v.ToString()})");
+                //    var playerStatus = this.gameObject.GetComponent<ParameterBumdleV1>().Status;
+                //    if (hitInfo.collider.gameObject.TryGetComponent<ParameterBumdleV1>(out ParameterBumdleV1 parameterBumdle) &&
+                //        hitInfo.collider.gameObject.tag == _enemyTag)
+                //    {
+                //        parameterBumdle.Status.Damaged(playerStatus.AttackPower);
+                //    }
+                //}
+            }
+
+
         }
+
+
+        // 右クリックが押された瞬間
+        if (Input.GetMouseButtonDown(1))
+        {
+            Mode = Mode == PlayerActionMode.Attack ? PlayerActionMode.Building : PlayerActionMode.Attack;
+            Debug.Log("行動モード変更：" + Mode.ToString());
+        }
+
     }
 
     private Vector3 GetInputVect()
