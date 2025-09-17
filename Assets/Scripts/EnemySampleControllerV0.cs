@@ -1,8 +1,18 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class EnemySampleControllerV0 : MonoBehaviour
 {
+    [SerializeField]
+    private float _distanceOfAttack;
+    [SerializeField]
+    private int _attackPower;
+    [SerializeField]
+    private float _attackingIntervalSecond;
+
+
+    private DateTime _timeAttacked;
     private BasicMovement _basicMove;
     private NavMeshAgent _agent;
 
@@ -26,11 +36,11 @@ public class EnemySampleControllerV0 : MonoBehaviour
 
         // ‚Ü‚Ê‚¯
         float distance = Vector3.Distance(this.transform.position, pl.transform.position);
-        if (distance > 3.0f)
+        if (distance < _distanceOfAttack && (DateTime.Now - _timeAttacked).TotalSeconds > _attackingIntervalSecond)
         {
-
+            _timeAttacked = DateTime.Now;
+            pl.GetComponent<ParameterBumdleV1>().Status.Damaged(_attackPower);
         }
-
 
     }
 }
