@@ -1,36 +1,31 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using TMPro;
 using UnityEditor.Experimental.GraphView;
-using UnityEditor.Toolbars;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEditor.Progress;
 
-public class InteractData
-{
-    public PlayerControllerVer0 Sender { get; }
-
-    public InteractData(PlayerControllerVer0 player)
-    {
-        Sender = player;
-    }
-}
-
-public interface IInteractable
-{
-    void Interact(InteractData data);
-}
 
 //public class PlayerControllerVer0 : MonoBehaviour, IProjectileHit
-public class PlayerControllerVer0 : MonoBehaviour, IInventoryOwner
+public class PlayerControllerVer0 : MonoBehaviour
 {
+
+    public enum PlayerActionMode
+    {
+        Building,
+        Attack
+    }
+    const string _enemyTag = "Enemy";
+
+    public PlayerActionMode Mode { get; set; }
+
     public static PlayerControllerVer0 Current { get; private set; }
 
     [SerializeField]
-    private float _InteractionRange;
+    private GameObject _BulletPrefab;
 
     [SerializeField]
     private GameObject _Prefab;
@@ -38,27 +33,24 @@ public class PlayerControllerVer0 : MonoBehaviour, IInventoryOwner
     [SerializeField]
     private CameraController _camera;
 
+    [SerializeField]
+    private float _projectileSpeed;
+
+    [SerializeField]
+    private Vector3 _Offset = new Vector3(0, 2.0f, 0);
     // コンポーネントキャッシュ
     private BasicMovement _basicMove; // 多分BasicMovementもClass化してもいいかも（エントリポイントあんまり増やしたくない）
 
     // プレイヤ構成用クラスたち
     private Inventory _inventry;
 
-    private PlayerHUD _hud;
-
     public Inventory Inventory => _inventry;
 
     void Start()
     {
         _basicMove = GetComponent<BasicMovement>();
-        _inventry = new Inventory(this);
-        _hud = new PlayerHUD();
-
-        // HPの初期値を入力してね。あとHPが更新されたら代入してね。
-
-        _hud.HP = -1;
-        _hud.ResourceCount = -1;
-        _hud.Money = _inventry.Money;
+        _inventry = new Inventory();
+        this.Mode = PlayerActionMode.Building;
     }
 
     private void Awake()
@@ -76,11 +68,6 @@ public class PlayerControllerVer0 : MonoBehaviour, IInventoryOwner
             _basicMove.Jump();
         }
 
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            ExcecuteInteract();
-        }
-
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             // トグルする
@@ -96,20 +83,74 @@ public class PlayerControllerVer0 : MonoBehaviour, IInventoryOwner
 
         if (Input.GetMouseButtonDown(0) && PlayerSystem.Current.IsLocked == false)
         {
-            var camTrans = CameraController.PlayerCameraCurrent.transform;
-            var f = camTrans.forward;
-            var lookf = f;
-            lookf.y = 0.0f;
-            transform.LookAt(transform.position + lookf.normalized);
-            
-            Debug.DrawRay(camTrans.position, f * 100.0f, Color.red, 100.0f);
-            if (Physics.Raycast(camTrans.position, f, out RaycastHit hitInfo, 100.0f))
+            if (Mode == PlayerActionMode.Building)
             {
-                var v = hitInfo.point;
-                EventDebugger.Current.AppendEventDebug($"[Rayhit]{v.ToString()})");
-                var newObj = GameObject.Instantiate(_Prefab, v, Quaternion.identity);
+                var camTrans = CameraController.PlayerCameraCurrent.transform;
+                var f = camTrans.forward;
+                var lookf = f;
+                lookf.y = 0.0f;
+                transform.LookAt(transform.position + lookf.normalized);
+
+                Debug.DrawRay(camTrans.position, f * 100.0f, Color.red, 100.0f);
+                if (Physics.Raycast(camTrans.position, f, out RaycastHit hitInfo, 100.0f))
+                {
+                    var v = hitInfo.point;
+                    EventDebugger.Current.AppendEventDebug($"[Rayhit]{v.ToString()})");
+                    var newObj = GameObject.Instantiate(_Prefab, v, Quaternion.identity);
+                }
             }
+            else if (Mode == PlayerActionMode.Attack)
+            {
+                // 攻撃処置
+
+                var camTrans = CameraController.PlayerCameraCurrent.transform;
+                var f = camTrans.forward;
+
+                //var lookf = f;
+                //lookf.y = 0.0f;
+                //transform.LookAt(transform.position + lookf.normalized);
+
+                // 発射元を設定
+                var obj = GameObject.Instantiate(_BulletPrefab);
+                obj.GetComponent<Projectile>().Owner = this.gameObject;
+
+                var rayOrigin = transform.position + _Offset;
+                obj.transform.position = rayOrigin;
+
+                if (obj.GetComponent(typeof(Projectile)) is Projectile proj)
+                {
+                    proj.Direction = f;
+                    proj.Speed = this._projectileSpeed;
+                }
+
+
+                //Debug.DrawRay(camTrans.position, f * 100.0f, Color.red, 100.0f);
+
+                //if (Physics.Raycast(camTrans.position, f, out RaycastHit hitInfo, 100.0f))
+                //{
+
+                //    var v = hitInfo.point;
+                //    EventDebugger.Current.AppendEventDebug($"[Rayhit]{v.ToString()})");
+                //    var playerStatus = this.gameObject.GetComponent<ParameterBumdleV1>().Status;
+                //    if (hitInfo.collider.gameObject.TryGetComponent<ParameterBumdleV1>(out ParameterBumdleV1 parameterBumdle) &&
+                //        hitInfo.collider.gameObject.tag == _enemyTag)
+                //    {
+                //        parameterBumdle.Status.Damaged(playerStatus.AttackPower);
+                //    }
+                //}
+            }
+
+
         }
+
+
+        // 右クリックが押された瞬間
+        if (Input.GetMouseButtonDown(1))
+        {
+            Mode = Mode == PlayerActionMode.Attack ? PlayerActionMode.Building : PlayerActionMode.Attack;
+            Debug.Log("行動モード変更：" + Mode.ToString());
+        }
+
     }
 
     private Vector3 GetInputVect()
@@ -126,17 +167,6 @@ public class PlayerControllerVer0 : MonoBehaviour, IInventoryOwner
     public Vector3 GetFocusVector()
     {
         return CameraController.PlayerCameraCurrent.transform.forward;
-    }
-
-    protected void ExcecuteInteract()
-    {
-        var cols = Physics.OverlapSphere(transform.position, _InteractionRange);
-        foreach (var c in cols) {
-            if (c.GetComponent(typeof(IInteractable)) is IInteractable inter)
-            {
-                inter.Interact(new InteractData(this));
-            }
-        }
     }
 
     #region インベントリ系
@@ -199,11 +229,6 @@ public class PlayerControllerVer0 : MonoBehaviour, IInventoryOwner
     {
         PlayerGUIManager.Current.ListSelecter.Close();
         PlayerGUIManager.Current.Dialog.Close();
-    }
-
-    public void Notify(InventoryEventNotify notify)
-    {
-        _hud.Money = _inventry.Money;
     }
     #endregion
 }

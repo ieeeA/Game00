@@ -103,6 +103,12 @@ public class ParameterBundleV0 : MonoBehaviour
     [SerializeField]
     public ParameterBundleV0InitialParamter[] _InitialParameter;
 
+    private void Update()
+    {
+        
+    }
+
+
     private void Awake()
     {
         for (ParameterType i = 0; i < ParameterType.MaxParameterType; i++)

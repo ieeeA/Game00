@@ -24,22 +24,24 @@ public class TurrentControllerV0 : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        _Timer = 0.0f;    
+        _Timer = 0.0f;
     }
 
     // Update is called once per frame
     void Update()
     {
         _Timer += Time.deltaTime;
-        if (_Timer < _Duration) return; 
+        if (_Timer < _Duration) return;
         _Timer = 0.0f;
 
-        foreach(var col in Physics.OverlapSphere(transform.position, _SearchRadius))
+        foreach (var col in Physics.OverlapSphere(transform.position, _SearchRadius))
         {
             if (col.gameObject.tag == _TargetTag)
             {
                 var obj = GameObject.Instantiate(_BulletPrefab);
-                
+                // ”­ŽËŒ³‚ðÝ’è
+                obj.GetComponent<Projectile>().Owner = this.gameObject;
+
                 var rayOrigin = transform.position + _Offset;
                 obj.transform.position = rayOrigin;
 

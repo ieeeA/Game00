@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 1757804045}
   - component: {fileID: 1757804035}
   - component: {fileID: 1757804036}
+  - component: {fileID: -7122519425236343680}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -156,6 +157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb47b93e4c8c4c84eb7a31b5851c4360, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _Prefab: {fileID: 0}
   _camera: {fileID: 0}
 --- !u!54 &-4562735379027816540
 Rigidbody:
@@ -241,6 +243,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fb494fe593880b4a8c844b99f0c0cdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-7122519425236343680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5193621411789187267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06b45c6a18599c34d858bc828ae434d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _characterStatus:
+    _hpMax: 2500
+    _mpMax: 120
+    _resistanceMax: 0
+    _attackPower: 25
+    _defensePower: 20
+    _initialBaseSpeed: 1
+    _isDebugging: 1
 --- !u!1001 &5517146104527457387
 PrefabInstance:
   m_ObjectHideFlags: 0
