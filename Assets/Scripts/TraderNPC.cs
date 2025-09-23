@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-public class TraderNPC : MonoBehaviour, IInteract
+public class TraderNPC : MonoBehaviour
 {
     [SerializeField]
     private int AddMoney = 10;

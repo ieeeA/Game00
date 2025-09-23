@@ -4,6 +4,7 @@ using UnityEngine;
 
 using System.Linq;
 using System;
+using UnityEngine.UIElements;
 
 [Serializable]
 public class ItemData
@@ -25,16 +26,51 @@ public class ItemContainer
     public int Count { get; set; }
 }
 
+public enum InventoryNotifyEnum
+{
+    MoneyChange,
+    ItemChange,
+    ItemRemove
+}
+
+public class InventoryEventNotify
+{
+
+
+    public InventoryNotifyEnum NotifyStyle { get; init; }
+
+    public ItemContainer ChangeContainer { get; init; }
+}
+
+public interface IInventoryOwner
+{
+    public void Notify(InventoryEventNotify notify);
+}
+
 public class Inventory
 {
+    private IInventoryOwner _Owner;
+    
     public List<ItemContainer> Containers => _Containers;
     private List<ItemContainer> _Containers = new List<ItemContainer>();
     private int _Money = 0;
 
+    public int Money => _Money;
+
+    public Inventory(IInventoryOwner owner=null)
+    {
+        _Owner = owner;
+    }
+
     public void AddMoney(int money)
     {
         _Money += money;
+        _Owner?.Notify(new InventoryEventNotify()
+        {
+            NotifyStyle = InventoryNotifyEnum.MoneyChange
+        });
     }
+
 
     public bool TryToRemoveMoney(int value)
     {
@@ -45,6 +81,10 @@ public class Inventory
             return false; 
         }
         _Money = current;
+        _Owner?.Notify(new InventoryEventNotify()
+        {
+            NotifyStyle = InventoryNotifyEnum.MoneyChange
+        });
         return true;
     }
 
@@ -56,6 +96,12 @@ public class Inventory
             if (c.Data.Name == data.Name)
             {
                 c.Count += count;
+
+                _Owner?.Notify(new InventoryEventNotify()
+                {
+                    NotifyStyle = InventoryNotifyEnum.ItemChange,
+                    ChangeContainer = c
+                });
                 return;
             }
         }
@@ -65,6 +111,12 @@ public class Inventory
             Count = count
         };
         _Containers.Add(nc);
+
+        _Owner?.Notify(new InventoryEventNotify()
+        {
+            NotifyStyle = InventoryNotifyEnum.ItemChange,
+            ChangeContainer =  nc
+        });
     }
 
     public bool TryRemoveItem(int index, int count)
@@ -79,6 +131,11 @@ public class Inventory
         if (curCount == 0)
         {
             _Containers.RemoveAt(index);
+
+            _Owner?.Notify(new InventoryEventNotify()
+            {
+                NotifyStyle = InventoryNotifyEnum.ItemRemove
+            });
             return true;
         }
         
@@ -88,6 +145,10 @@ public class Inventory
         }
 
         _Containers[index].Count = curCount;
+        _Owner?.Notify(new InventoryEventNotify()
+        {
+            NotifyStyle = InventoryNotifyEnum.ItemRemove
+        });
         return true;
     }
 
